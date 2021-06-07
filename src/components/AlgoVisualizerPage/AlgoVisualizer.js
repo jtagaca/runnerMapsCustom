@@ -95,7 +95,7 @@ const AlgoVisualizer = () => {
 
   const handleInstructions = () => {
     alert(
-      "'Green Grid' -> starting point \n'Red Grid'-> endpoint \n  1️⃣ Drag the green or red grid to your desired location on the grid. \n  2️⃣ Click and drag your mouse to the empty cells to mark them as a wall.\n  3️⃣ Click the 'Find Shortest path' button. ✨  "
+      "'Green Grid' -> starting point \n'Red Grid'-> endpoint \n  1️⃣ Drag the green or red grid to your desired location on the grid. \n  2️⃣ Click and drag your mouse to the empty cells to mark them as a wall.\n  3️⃣ Click the 'Find Path' button. ✨  "
     );
   };
 
@@ -185,15 +185,27 @@ const AlgoVisualizer = () => {
   };
   return (
     <div className="container text-center">
-      <div className="row middle2">
-        <Button className="solveBtn col-md-3 mx-3" onClick={solveTheGrid}>
-          Find Shortest Path
+      <div className="row middle2 containerborder">
+        <Button
+          variant="dark"
+          className="solveBtn col-md-3 mx-3"
+          onClick={solveTheGrid}
+        >
+          Find Path
         </Button>
-        <Button className="solveBtn col-md-3 mx-3" onClick={handleClear}>
+        <Button
+          variant="dark"
+          className="solveBtn col-md-3 mx-3"
+          onClick={handleInstructions}
+        >
+          Instructions
+        </Button>
+        <Button
+          variant="dark"
+          className="solveBtn col-md-3 mx-3"
+          onClick={handleClear}
+        >
           Reset
-        </Button>
-        <Button className="solveBtn col-md-3 mx-3" onClick={handleInstructions}>
-          instructions
         </Button>
       </div>
       <div className="gridContainer">
