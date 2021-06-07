@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./AlgoVisualizer.css";
 import { dijkstraAlgo } from "../../algorithms/dijkstraAlgo";
-
+import { useHistory } from "react-router-dom";
 const baseGrid = [
   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -26,6 +26,7 @@ const AlgoVisualizer = () => {
     ei: 0,
     ej: 9,
   });
+  let history = useHistory();
 
   const MAX_PATH_LENGTH = 81;
 
@@ -66,44 +67,6 @@ const AlgoVisualizer = () => {
       `.node-${ei}-${ej}`
     ).className = `eachCell node-${ei}-${ej} end`;
   }, [initPos]);
-
-  const handleClear = () => {
-    const tGrid = grid;
-    let prevsi = 0,
-      prevsj = 0;
-    let prevei = 0,
-      prevej = 0;
-    for (let i = 0; i < tGrid.length; i++) {
-      for (let j = 0; j < tGrid[i].length; j++) {
-        if (tGrid[i][j] == 0) {
-          prevsi = i;
-          prevsj = j;
-        } else if (tGrid[i][j] == -10) {
-          prevei = i;
-          prevej = j;
-        }
-      }
-    }
-
-    tGrid[prevsi][prevsj] = -1;
-    tGrid[prevei][prevej] = -1;
-    tGrid[initPos.si][initPos.sj] = 0;
-    tGrid[initPos.ei][initPos.ej] = -10;
-    setGrid([...tGrid]);
-    const { si, sj, ei, ej } = initPos;
-    document.querySelector(
-      `.node-${prevsi}-${prevsj}`
-    ).className = `eachCell node-${prevsi}-${prevsj}`;
-    document.querySelector(
-      `.node-${prevei}-${prevej}`
-    ).className = `eachCell node-${prevei}-${prevej}`;
-    document.querySelector(
-      `.node-${si}-${sj}`
-    ).className = `eachCell node-${si}-${sj} start`;
-    document.querySelector(
-      `.node-${ei}-${ej}`
-    ).className = `eachCell node-${ei}-${ej} end`;
-  };
 
   const changeColor = (i, j, type) => {
     if (
@@ -177,6 +140,8 @@ const AlgoVisualizer = () => {
     }
   };
 
+  //TODO implement a modal
+
   const onCellIn = (i, j) => {
     if (i == initPos.si && j == initPos.sj) {
       setIsMouseDraggingStartPos(true);
@@ -201,6 +166,10 @@ const AlgoVisualizer = () => {
     }
   };
 
+  const handleClear = () => {
+    // history.push("/hello");
+    window.location.reload();
+  };
   return (
     <div className="algoPage">
       <div className="solveBtnContainer">
