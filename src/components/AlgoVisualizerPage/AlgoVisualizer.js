@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./AlgoVisualizer.css";
 import { dijkstraAlgo } from "../../algorithms/dijkstraAlgo";
 import { useHistory } from "react-router-dom";
+import Modal from "react-bootstrap/Modal";
+import Button from "react-bootstrap/Button";
 const baseGrid = [
   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
   [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
@@ -26,6 +28,11 @@ const AlgoVisualizer = () => {
     ei: 0,
     ej: 9,
   });
+
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   let history = useHistory();
 
   const MAX_PATH_LENGTH = 81;
@@ -84,6 +91,12 @@ const AlgoVisualizer = () => {
         `.node-${i}-${j}`
       ).className = `eachCell node-${i}-${j} pathCell`;
     }
+  };
+
+  const handleInstructions = () => {
+    alert(
+      "'Green Grid' -> starting point \n'Red Grid'-> endpoint \n  1️⃣ Drag the green or red grid to your desired location on the grid. \n  2️⃣ Click and drag your mouse to the empty cells to mark them as a wall.\n  3️⃣ Click the 'Find Shortest path' button. ✨  "
+    );
   };
 
   const solveTheGrid = () => {
@@ -171,14 +184,17 @@ const AlgoVisualizer = () => {
     window.location.reload();
   };
   return (
-    <div className="algoPage">
-      <div className="solveBtnContainer">
-        <button className="solveBtn" onClick={solveTheGrid}>
+    <div className="container text-center">
+      <div className="row middle2">
+        <Button className="solveBtn col-md-3 mx-3" onClick={solveTheGrid}>
           Find Shortest Path
-        </button>
-        <button className="solveBtn" onClick={handleClear}>
-          Clear
-        </button>
+        </Button>
+        <Button className="solveBtn col-md-3 mx-3" onClick={handleClear}>
+          Reset
+        </Button>
+        <Button className="solveBtn col-md-3 mx-3" onClick={handleInstructions}>
+          instructions
+        </Button>
       </div>
       <div className="gridContainer">
         <div className="grid">

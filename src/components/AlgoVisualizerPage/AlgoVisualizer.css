@@ -1,4 +1,4 @@
-.algoPage{
+.algoPage {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -6,11 +6,11 @@
   justify-content: space-evenly;
 }
 
-.solveBtnContainer{
+.solveBtnContainer {
   padding: 20px;
 }
 
-.gridContainer{
+.gridContainer {
   background-color: rgb(255, 255, 255);
   display: flex;
   align-items: center;
@@ -22,7 +22,6 @@
   grid-template-columns: repeat(10, 1fr);
   transition: all 1s ease;
   margin-top: 20px;
-  
 }
 
 .eachCell {
@@ -62,7 +61,7 @@
   }
   100% {
     background-color: #3498db;
-    transform: scale(1.0);
+    transform: scale(1);
   }
 }
 
@@ -70,12 +69,12 @@
   border: none;
   outline: none;
   /* margin-bottom: 20px; */
-  padding: 10px 20px;
+  /* padding: 10px 20px; */
   background-color: #3498db;
   color: white;
   border-bottom: #2980b9 5px solid;
-  font-size: 20px;
-  border-radius: 5px;
+  font-size: 15px;
+  border-radius: 2px;
 }
 
 .solveBtn:active {
@@ -84,4 +83,10 @@
 
 .credits {
   color: rgb(173, 173, 173);
+}
+
+.middle2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
