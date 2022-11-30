@@ -1,8 +1,5 @@
 import { Queue } from '../Queue/Queue';
 
-// Start and End nodes
-const MAX_PATH_LENGTH = 81;
-
 
 export const dijkstraAlgo = (grid, initPos) => {
     const {startRowIndex, startColIndex, endRowIndex, endColIndex} = initPos;
@@ -17,6 +14,7 @@ export const dijkstraAlgo = (grid, initPos) => {
     while (!queue.isEmpty()) {
         const [currentRowIdx, currentColIdx] = queue.dequeue();
 
+        // as long as it is in bounds and not equal to a wall then add it to the queue
         //UP
         if (currentRowIdx != 0 && tGrid[currentRowIdx - 1][currentColIdx] != -5) {
             if (tGrid[currentRowIdx - 1][currentColIdx] == -10) {
@@ -74,12 +72,12 @@ export const dijkstraAlgo = (grid, initPos) => {
         }
     }
     const shortPathList = findShortPath(tGrid, initPos);
-    console.log(tGrid);
     return [shortPathList, listOfAllNodes, tGrid];
 }
 
 const findShortPath = (grid, initPos) => {
     const {startRowIndex, startColIndex, endRowIndex, endColIndex} = initPos;
+    const MAX_PATH_LENGTH = ((grid.length)-1) * ((grid[0].length)-1);
 
     let currentRowIdx = endRowIndex, currentColIdx = endColIndex;
     const listOfNodes = [];

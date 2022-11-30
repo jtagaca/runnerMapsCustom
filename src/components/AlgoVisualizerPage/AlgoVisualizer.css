@@ -5,7 +5,9 @@
   width: 100%;
   justify-content: space-evenly;
 }
-
+.room{
+  background-color: #ae00ff !important;
+}
 .solveBtnContainer {
   padding: 20px;
 }
