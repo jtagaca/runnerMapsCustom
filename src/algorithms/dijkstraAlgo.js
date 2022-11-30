@@ -3,7 +3,6 @@ import { Queue } from '../Queue/Queue';
 
 export const dijkstraAlgo = (grid, initPos) => {
     const {startRowIndex, startColIndex, endRowIndex, endColIndex} = initPos;
-    debugger;
 
     const listOfAllNodes = [];
     const tGrid = grid;
@@ -13,7 +12,7 @@ export const dijkstraAlgo = (grid, initPos) => {
 
     while (!queue.isEmpty()) {
         const [currentRowIdx, currentColIdx] = queue.dequeue();
-
+        // we can also have an ajacent map check instead of only top left bottom right,
         // as long as it is in bounds and not equal to a wall then add it to the queue
         //UP
         if (currentRowIdx != 0 && tGrid[currentRowIdx - 1][currentColIdx] != -5) {
@@ -58,7 +57,7 @@ export const dijkstraAlgo = (grid, initPos) => {
         }
 
         //RIGHT
-        if (currentColIdx != 9 && tGrid[currentRowIdx][currentColIdx + 1] != -5) {
+        if (currentColIdx != (grid[0].length-1) && tGrid[currentRowIdx][currentColIdx + 1] != -5) {
             if (tGrid[currentRowIdx][currentColIdx + 1] == -10) {
                 tGrid[currentRowIdx][currentColIdx + 1] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
@@ -109,7 +108,7 @@ const findShortPath = (grid, initPos) => {
         }
 
         //RIGHT
-        if (currentColIdx != 9 && grid[currentRowIdx][currentColIdx + 1] == grid[currentRowIdx][currentColIdx] - 1) {
+        if (currentColIdx != (grid[0].length-1) && grid[currentRowIdx][currentColIdx + 1] == grid[currentRowIdx][currentColIdx] - 1) {
             listOfNodes.push([currentRowIdx, currentColIdx + 1]);
             currentColIdx++;
             continue;

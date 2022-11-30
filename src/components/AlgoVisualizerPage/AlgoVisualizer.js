@@ -5,10 +5,9 @@ import { useHistory } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 
-
 const baseGrid = [];
 const rows = 10;
-const columns = 10;
+const columns = 20;
 
 for (var i = 0; i < rows; i++) {
   baseGrid[i] = [];
@@ -16,6 +15,10 @@ for (var i = 0; i < rows; i++) {
     baseGrid[i][j] = -1;
   }
 }
+const predefinedTextVisuals = {};
+predefinedTextVisuals[[1, 9]] = "Head Straight";
+predefinedTextVisuals[[3, 9]] = "Keep Head Straight";
+predefinedTextVisuals[[8, 9]] = "Turn Left";
 
 // console.log(baseGrid);
 
@@ -48,7 +51,6 @@ const AlgoVisualizer = () => {
     // safety initializationOfStart and end
     for (let row = 0; row < tGrid.length; row++) {
       for (let col = 0; col < tGrid[row].length; col++) {
-        debugger;
         if (tGrid[row][col] == 0) {
           prevsi = row;
           prevsj = col;
@@ -124,6 +126,11 @@ const AlgoVisualizer = () => {
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} visualCell`;
+    }
+    else if (type == "marker") {
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} marker`;
     } else {
       document.querySelector(
         `.node-${row}-${col}`
@@ -155,7 +162,13 @@ const AlgoVisualizer = () => {
     for (let row = 0; row < shortPathList.length; row++) {
       setTimeout(() => {
         const node = shortPathList[row];
-        changeColor(node[0], node[1], "path");
+        debugger;
+        if ([node[0], node[1]] in predefinedTextVisuals) {
+          changeColor(node[0], node[1], "marker");
+          console.log(predefinedTextVisuals[[node[0], node[1]]]);
+        } else {
+          changeColor(node[0], node[1], "path");
+        }
       }, 50 * (row + listOfAllNodes.length));
     }
   };
