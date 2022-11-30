@@ -4,18 +4,20 @@ import { dijkstraAlgo } from "../../algorithms/dijkstraAlgo";
 import { useHistory } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-const baseGrid = [
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
-];
+
+
+const baseGrid = [];
+const rows = 10;
+const columns = 10;
+
+for (var i = 0; i < rows; i++) {
+  baseGrid[i] = [];
+  for (var j = 0; j < columns; j++) {
+    baseGrid[i][j] = -1;
+  }
+}
+
+// console.log(baseGrid);
 
 const AlgoVisualizer = () => {
   const [grid, setGrid] = useState(baseGrid);
@@ -43,8 +45,10 @@ const AlgoVisualizer = () => {
       prevsj = 0;
     let prevei = 0,
       prevej = 0;
+    // safety initializationOfStart and end
     for (let row = 0; row < tGrid.length; row++) {
       for (let col = 0; col < tGrid[row].length; col++) {
+        debugger;
         if (tGrid[row][col] == 0) {
           prevsi = row;
           prevsj = col;
@@ -57,11 +61,14 @@ const AlgoVisualizer = () => {
 
     tGrid[prevsi][prevsj] = -1;
     tGrid[prevei][prevej] = -1;
-    tGrid[initializedPosition.startRowIndex][initializedPosition.startColIndex] = 0;
-    tGrid[initializedPosition.endRowIndex][initializedPosition.endColIndex] = -10;
-    debugger;
+    tGrid[initializedPosition.startRowIndex][
+      initializedPosition.startColIndex
+    ] = 0;
+    tGrid[initializedPosition.endRowIndex][initializedPosition.endColIndex] =
+      -10;
     setGrid([...tGrid]);
-    const { startRowIndex, startColIndex, endRowIndex, endColIndex } = initializedPosition;
+    const { startRowIndex, startColIndex, endRowIndex, endColIndex } =
+      initializedPosition;
     document.querySelector(
       `.node-${prevsi}-${prevsj}`
     ).className = `eachCell node-${prevsi}-${prevsj}`;
@@ -74,12 +81,42 @@ const AlgoVisualizer = () => {
     document.querySelector(
       `.node-${endRowIndex}-${endColIndex}`
     ).className = `eachCell node-${endRowIndex}-${endColIndex} end`;
+
+    let roomNodes = [
+      [0, 0],
+      [9, 5],
+    ];
+    for (let i = 0; i < roomNodes.length; i++) {
+      let [row, col] = roomNodes[i];
+      tGrid[row][col] = -5;
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} room`;
+    }
+
+    let predefinedWalls = [
+      [0, 2],
+      [1, 2],
+      [2, 2],
+      [3, 2],
+      [2, 0],
+      [1, 0],
+    ];
+    for (let i = 0; i < predefinedWalls.length; i++) {
+      let [row, col] = predefinedWalls[i];
+      tGrid[row][col] = -5;
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} wall`;
+    }
   }, [initializedPosition]);
 
   const changeColor = (row, col, type) => {
     if (
-      (row == initializedPosition.startRowIndex && col == initializedPosition.startColIndex) ||
-      (row == initializedPosition.endRowIndex && col == initializedPosition.endColIndex)
+      (row == initializedPosition.startRowIndex &&
+        col == initializedPosition.startColIndex) ||
+      (row == initializedPosition.endRowIndex &&
+        col == initializedPosition.endColIndex)
     ) {
       return;
     }
@@ -125,6 +162,7 @@ const AlgoVisualizer = () => {
 
   const toggleWall = (row, col) => {
     // if the current location is not a wall then convert it to a wall by changing the color to black and value to -5
+    console.log(row, col);
     if (grid[row][col] != -5) {
       const tGrid = grid;
       tGrid[row][col] = -5;
@@ -133,7 +171,6 @@ const AlgoVisualizer = () => {
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} wall`;
     } else {
-    
       const tGrid = grid;
       tGrid[row][col] = -1;
       setGrid([...tGrid]);
@@ -145,10 +182,18 @@ const AlgoVisualizer = () => {
 
   const onCellEnter = (row, col) => {
     if (isMouseDraggingStartPos) {
-      setInitPos({ ...initializedPosition, startRowIndex: row, startColIndex: col });
+      setInitPos({
+        ...initializedPosition,
+        startRowIndex: row,
+        startColIndex: col,
+      });
       return;
     } else if (isMouseDraggingEndPos) {
-      setInitPos({ ...initializedPosition, endRowIndex: row, endColIndex: col });
+      setInitPos({
+        ...initializedPosition,
+        endRowIndex: row,
+        endColIndex: col,
+      });
       return;
     }
     if (isMousePressed) {
@@ -159,10 +204,16 @@ const AlgoVisualizer = () => {
   //TODO implement a modal
 
   const onCellIn = (row, col) => {
-    if (row == initializedPosition.startRowIndex && col == initializedPosition.startColIndex) {
+    if (
+      row == initializedPosition.startRowIndex &&
+      col == initializedPosition.startColIndex
+    ) {
       setIsMouseDraggingStartPos(true);
       return;
-    } else if (row == initializedPosition.endRowIndex && col == initializedPosition.endColIndex) {
+    } else if (
+      row == initializedPosition.endRowIndex &&
+      col == initializedPosition.endColIndex
+    ) {
       setIsMouseDraggingEndPos(true);
       return;
     }
