@@ -22,11 +22,11 @@ const AlgoVisualizer = () => {
   const [isMousePressed, setIsMousePressed] = useState(false);
   const [isMouseDraggingStartPos, setIsMouseDraggingStartPos] = useState(false);
   const [isMouseDraggingEndPos, setIsMouseDraggingEndPos] = useState(false);
-  const [initPos, setInitPos] = useState({
-    si: 9,
-    sj: 0,
-    ei: 0,
-    ej: 9,
+  const [initializedPosition, setInitPos] = useState({
+    startRowIndex: 9,
+    startColIndex: 0,
+    endRowIndex: 0,
+    endColIndex: 9,
   });
 
   const [show, setShow] = useState(false);
@@ -43,24 +43,25 @@ const AlgoVisualizer = () => {
       prevsj = 0;
     let prevei = 0,
       prevej = 0;
-    for (let i = 0; i < tGrid.length; i++) {
-      for (let j = 0; j < tGrid[i].length; j++) {
-        if (tGrid[i][j] == 0) {
-          prevsi = i;
-          prevsj = j;
-        } else if (tGrid[i][j] == -10) {
-          prevei = i;
-          prevej = j;
+    for (let row = 0; row < tGrid.length; row++) {
+      for (let col = 0; col < tGrid[row].length; col++) {
+        if (tGrid[row][col] == 0) {
+          prevsi = row;
+          prevsj = col;
+        } else if (tGrid[row][col] == -10) {
+          prevei = row;
+          prevej = col;
         }
       }
     }
 
     tGrid[prevsi][prevsj] = -1;
     tGrid[prevei][prevej] = -1;
-    tGrid[initPos.si][initPos.sj] = 0;
-    tGrid[initPos.ei][initPos.ej] = -10;
+    tGrid[initializedPosition.startRowIndex][initializedPosition.startColIndex] = 0;
+    tGrid[initializedPosition.endRowIndex][initializedPosition.endColIndex] = -10;
+    debugger;
     setGrid([...tGrid]);
-    const { si, sj, ei, ej } = initPos;
+    const { startRowIndex, startColIndex, endRowIndex, endColIndex } = initializedPosition;
     document.querySelector(
       `.node-${prevsi}-${prevsj}`
     ).className = `eachCell node-${prevsi}-${prevsj}`;
@@ -68,28 +69,28 @@ const AlgoVisualizer = () => {
       `.node-${prevei}-${prevej}`
     ).className = `eachCell node-${prevei}-${prevej}`;
     document.querySelector(
-      `.node-${si}-${sj}`
-    ).className = `eachCell node-${si}-${sj} start`;
+      `.node-${startRowIndex}-${startColIndex}`
+    ).className = `eachCell node-${startRowIndex}-${startColIndex} start`;
     document.querySelector(
-      `.node-${ei}-${ej}`
-    ).className = `eachCell node-${ei}-${ej} end`;
-  }, [initPos]);
+      `.node-${endRowIndex}-${endColIndex}`
+    ).className = `eachCell node-${endRowIndex}-${endColIndex} end`;
+  }, [initializedPosition]);
 
-  const changeColor = (i, j, type) => {
+  const changeColor = (row, col, type) => {
     if (
-      (i == initPos.si && j == initPos.sj) ||
-      (i == initPos.ei && j == initPos.ej)
+      (row == initializedPosition.startRowIndex && col == initializedPosition.startColIndex) ||
+      (row == initializedPosition.endRowIndex && col == initializedPosition.endColIndex)
     ) {
       return;
     }
     if (type == "visual") {
       document.querySelector(
-        `.node-${i}-${j}`
-      ).className = `eachCell node-${i}-${j} visualCell`;
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} visualCell`;
     } else {
       document.querySelector(
-        `.node-${i}-${j}`
-      ).className = `eachCell node-${i}-${j} pathCell`;
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} pathCell`;
     }
   };
 
@@ -102,69 +103,71 @@ const AlgoVisualizer = () => {
   const solveTheGrid = () => {
     const [shortPathList, listOfAllNodes, solvedGrid] = dijkstraAlgo(
       grid,
-      initPos
+      initializedPosition
     );
     setGrid(solvedGrid);
     // Fill visualize color
-    for (let i = 0; i < listOfAllNodes.length; i++) {
+    for (let row = 0; row < listOfAllNodes.length; row++) {
       setTimeout(() => {
-        const node = listOfAllNodes[i];
+        const node = listOfAllNodes[row];
         changeColor(node[0], node[1], "visual");
-      }, 50 * i);
+      }, 50 * row);
     }
 
     // Fill path color
-    for (let i = 0; i < shortPathList.length; i++) {
+    for (let row = 0; row < shortPathList.length; row++) {
       setTimeout(() => {
-        const node = shortPathList[i];
+        const node = shortPathList[row];
         changeColor(node[0], node[1], "path");
-      }, 50 * (i + listOfAllNodes.length));
+      }, 50 * (row + listOfAllNodes.length));
     }
   };
 
-  const toggleWall = (i, j) => {
-    if (grid[i][j] != -5) {
+  const toggleWall = (row, col) => {
+    // if the current location is not a wall then convert it to a wall by changing the color to black and value to -5
+    if (grid[row][col] != -5) {
       const tGrid = grid;
-      tGrid[i][j] = -5;
+      tGrid[row][col] = -5;
       setGrid([...tGrid]);
       document.querySelector(
-        `.node-${i}-${j}`
-      ).className = `eachCell node-${i}-${j} wall`;
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} wall`;
     } else {
+    
       const tGrid = grid;
-      tGrid[i][j] = -1;
+      tGrid[row][col] = -1;
       setGrid([...tGrid]);
       document.querySelector(
-        `.node-${i}-${j}`
-      ).className = `eachCell node-${i}-${j}`;
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col}`;
     }
   };
 
-  const onCellEnter = (i, j) => {
+  const onCellEnter = (row, col) => {
     if (isMouseDraggingStartPos) {
-      setInitPos({ ...initPos, si: i, sj: j });
+      setInitPos({ ...initializedPosition, startRowIndex: row, startColIndex: col });
       return;
     } else if (isMouseDraggingEndPos) {
-      setInitPos({ ...initPos, ei: i, ej: j });
+      setInitPos({ ...initializedPosition, endRowIndex: row, endColIndex: col });
       return;
     }
     if (isMousePressed) {
-      toggleWall(i, j);
+      toggleWall(row, col);
     }
   };
 
   //TODO implement a modal
 
-  const onCellIn = (i, j) => {
-    if (i == initPos.si && j == initPos.sj) {
+  const onCellIn = (row, col) => {
+    if (row == initializedPosition.startRowIndex && col == initializedPosition.startColIndex) {
       setIsMouseDraggingStartPos(true);
       return;
-    } else if (i == initPos.ei && j == initPos.ej) {
+    } else if (row == initializedPosition.endRowIndex && col == initializedPosition.endColIndex) {
       setIsMouseDraggingEndPos(true);
       return;
     }
     setIsMousePressed(true);
-    toggleWall(i, j);
+    toggleWall(row, col);
   };
 
   const onCellOut = () => {
