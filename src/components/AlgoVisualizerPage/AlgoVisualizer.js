@@ -35,6 +35,7 @@ const AlgoVisualizer = () => {
     endRowIndex: 0,
     endColIndex: 9,
   });
+  const [previous, setPrevious] = useState(null);
   const [sortedMarkers, setSortedMarkers] = useState([]);
   const [currentGeoLocation, setCurrentGeoLocation] = useState({ latitude: 35.450630, longitude: -119.105934 });
   const [currentMarkersVisible, setCurrentMarkersVisible] = useState([]);
@@ -178,12 +179,21 @@ const AlgoVisualizer = () => {
     if (currentMarkersVisible.length == 0) {
      return 
     }
+
     let closestMarkers = getClosestMarkers();
-    debugger;
     let currentTopMarker = closestMarkers[0];
+    if (previous != null && currentTopMarker[1] == previous  ) {
+      return
+    }
+    debugger;
+    if (previous != null) {
+      let [prevRow, prevCol] = previous;
+      changeColor(prevRow, prevCol, "marker");
+    }
     let [row, col] = currentTopMarker[1];
     changeColor(row, col, "currentmarker");
     console.log(currentGeoLocation)
+    setPrevious(currentTopMarker[1]);
 
 
   }, [currentGeoLocation])
