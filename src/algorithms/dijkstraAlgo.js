@@ -5,71 +5,72 @@ const MAX_PATH_LENGTH = 81;
 
 
 export const dijkstraAlgo = (grid, initPos) => {
-    const {si, sj, ei, ej} = initPos;
+    const {startRowIndex, startColIndex, endRowIndex, endColIndex} = initPos;
+    debugger;
 
     const listOfAllNodes = [];
     const tGrid = grid;
     const queue = new Queue();
-    queue.enqueue([si, sj]);
-    listOfAllNodes.push([si, sj]);
+    queue.enqueue([startRowIndex, startColIndex]);
+    listOfAllNodes.push([startRowIndex, startColIndex]);
 
     while (!queue.isEmpty()) {
-        const [i, j] = queue.dequeue();
+        const [currentRowIdx, currentColIdx] = queue.dequeue();
 
         //UP
-        if (i != 0 && tGrid[i - 1][j] != -5) {
-            if (tGrid[i - 1][j] == -10) {
-                tGrid[i - 1][j] = tGrid[i][j] + 1;
+        if (currentRowIdx != 0 && tGrid[currentRowIdx - 1][currentColIdx] != -5) {
+            if (tGrid[currentRowIdx - 1][currentColIdx] == -10) {
+                tGrid[currentRowIdx - 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
-            else if (tGrid[i - 1][j] == -1) {
-                tGrid[i - 1][j] = tGrid[i][j] + 1;
-                queue.enqueue([i - 1, j]);
-                listOfAllNodes.push([i - 1, j]);
+            else if (tGrid[currentRowIdx - 1][currentColIdx] == -1) {
+                tGrid[currentRowIdx - 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
+                queue.enqueue([currentRowIdx - 1, currentColIdx]);
+                listOfAllNodes.push([currentRowIdx - 1, currentColIdx]);
             }
-            else { tGrid[i - 1][j] = Math.min(tGrid[i - 1][j], tGrid[i][j] + 1) }
+            else { tGrid[currentRowIdx - 1][currentColIdx] = Math.min(tGrid[currentRowIdx - 1][currentColIdx], tGrid[currentRowIdx][currentColIdx] + 1) }
         }
 
         //DOWN
-        if (i != 9 && tGrid[i + 1][j] != -5) {
-            if (tGrid[i + 1][j] == -10) {
-                tGrid[i + 1][j] = tGrid[i][j] + 1;
+        if (currentRowIdx != 9 && tGrid[currentRowIdx + 1][currentColIdx] != -5) {
+            if (tGrid[currentRowIdx + 1][currentColIdx] == -10) {
+                tGrid[currentRowIdx + 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
-            else if (tGrid[i + 1][j] == -1) {
-                tGrid[i + 1][j] = tGrid[i][j] + 1;
-                queue.enqueue([i + 1, j]);
-                listOfAllNodes.push([i + 1, j]);
+            else if (tGrid[currentRowIdx + 1][currentColIdx] == -1) {
+                tGrid[currentRowIdx + 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
+                queue.enqueue([currentRowIdx + 1, currentColIdx]);
+                listOfAllNodes.push([currentRowIdx + 1, currentColIdx]);
             }
-            else { tGrid[i + 1][j] = Math.min(tGrid[i + 1][j], tGrid[i][j] + 1) }
+            else { tGrid[currentRowIdx + 1][currentColIdx] = Math.min(tGrid[currentRowIdx + 1][currentColIdx], tGrid[currentRowIdx][currentColIdx] + 1) }
         }
 
         //LEFT
-        if (j != 0 && tGrid[i][j - 1] != -5) {
-            if (tGrid[i][j - 1] == -10) {
-                tGrid[i][j - 1] = tGrid[i][j] + 1;
+        if (currentColIdx != 0 && tGrid[currentRowIdx][currentColIdx - 1] != -5) {
+            if (tGrid[currentRowIdx][currentColIdx - 1] == -10) {
+                tGrid[currentRowIdx][currentColIdx - 1] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
-            else if (tGrid[i][j - 1] == -1) {
-                tGrid[i][j - 1] = tGrid[i][j] + 1;
-                queue.enqueue([i, j - 1]);
-                listOfAllNodes.push([i, j - 1]);
+            else if (tGrid[currentRowIdx][currentColIdx - 1] == -1) {
+                tGrid[currentRowIdx][currentColIdx - 1] = tGrid[currentRowIdx][currentColIdx] + 1;
+                queue.enqueue([currentRowIdx, currentColIdx - 1]);
+                listOfAllNodes.push([currentRowIdx, currentColIdx - 1]);
             }
-            else { tGrid[i][j - 1] = Math.min(tGrid[i][j - 1], tGrid[i][j] + 1) }
+            else { tGrid[currentRowIdx][currentColIdx - 1] = Math.min(tGrid[currentRowIdx][currentColIdx - 1], tGrid[currentRowIdx][currentColIdx] + 1) }
         }
 
         //RIGHT
-        if (j != 9 && tGrid[i][j + 1] != -5) {
-            if (tGrid[i][j + 1] == -10) {
-                tGrid[i][j + 1] = tGrid[i][j] + 1;
+        if (currentColIdx != 9 && tGrid[currentRowIdx][currentColIdx + 1] != -5) {
+            if (tGrid[currentRowIdx][currentColIdx + 1] == -10) {
+                tGrid[currentRowIdx][currentColIdx + 1] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
-            else if (tGrid[i][j + 1] == -1) {
-                tGrid[i][j + 1] = tGrid[i][j] + 1;
-                queue.enqueue([i, j + 1]);
-                listOfAllNodes.push([i, j + 1]);
+            else if (tGrid[currentRowIdx][currentColIdx + 1] == -1) {
+                tGrid[currentRowIdx][currentColIdx + 1] = tGrid[currentRowIdx][currentColIdx] + 1;
+                queue.enqueue([currentRowIdx, currentColIdx + 1]);
+                listOfAllNodes.push([currentRowIdx, currentColIdx + 1]);
             }
-            else { tGrid[i][j + 1] = Math.min(tGrid[i][j + 1], tGrid[i][j] + 1) }
+            else { tGrid[currentRowIdx][currentColIdx + 1] = Math.min(tGrid[currentRowIdx][currentColIdx + 1], tGrid[currentRowIdx][currentColIdx] + 1) }
         }
     }
     const shortPathList = findShortPath(tGrid, initPos);
@@ -78,40 +79,41 @@ export const dijkstraAlgo = (grid, initPos) => {
 }
 
 const findShortPath = (grid, initPos) => {
-    const {si, sj, ei, ej} = initPos;
-    let i = ei, j = ej;
+    const {startRowIndex, startColIndex, endRowIndex, endColIndex} = initPos;
+
+    let currentRowIdx = endRowIndex, currentColIdx = endColIndex;
     const listOfNodes = [];
-    listOfNodes.push([i, j]);
+    listOfNodes.push([currentRowIdx, currentColIdx]);
     let count = 0;
-    while (i != si || j != sj) {
+    while (currentRowIdx != startRowIndex || currentColIdx != startColIndex) {
         count++;
         if (count >= MAX_PATH_LENGTH) {
             break;
         }
         //UP
-        if (i != 0 && grid[i - 1][j] == grid[i][j] - 1) {
-            listOfNodes.push([i - 1, j]);
-            i--;
+        if (currentRowIdx != 0 && grid[currentRowIdx - 1][currentColIdx] == grid[currentRowIdx][currentColIdx] - 1) {
+            listOfNodes.push([currentRowIdx - 1, currentColIdx]);
+            currentRowIdx--;
             continue;
         }
         //DOWN
-        if (i != 9 && grid[i + 1][j] == grid[i][j] - 1) {
-            listOfNodes.push([i + 1, j]);
-            i++;
+        if (currentRowIdx != 9 && grid[currentRowIdx + 1][currentColIdx] == grid[currentRowIdx][currentColIdx] - 1) {
+            listOfNodes.push([currentRowIdx + 1, currentColIdx]);
+            currentRowIdx++;
             continue;
         }
 
         //LEFT
-        if (j != 0 && grid[i][j - 1] == grid[i][j] - 1) {
-            listOfNodes.push([i, j - 1]);
-            j--;
+        if (currentColIdx != 0 && grid[currentRowIdx][currentColIdx - 1] == grid[currentRowIdx][currentColIdx] - 1) {
+            listOfNodes.push([currentRowIdx, currentColIdx - 1]);
+            currentColIdx--;
             continue;
         }
 
         //RIGHT
-        if (j != 9 && grid[i][j + 1] == grid[i][j] - 1) {
-            listOfNodes.push([i, j + 1]);
-            j++;
+        if (currentColIdx != 9 && grid[currentRowIdx][currentColIdx + 1] == grid[currentRowIdx][currentColIdx] - 1) {
+            listOfNodes.push([currentRowIdx, currentColIdx + 1]);
+            currentColIdx++;
             continue;
         }
     }

@@ -214,17 +214,17 @@ const AlgoVisualizer = () => {
       <div className="gridContainer">
         <div className="grid">
           {grid.map((row, rowIndex) => {
-            return row.map((cell, cellIndex) => {
+            return row.map((cell, colIndex) => {
               return (
                 <div
                   onMouseDown={() => {
-                    onCellIn(rowIndex, cellIndex);
+                    onCellIn(rowIndex, colIndex);
                   }}
                   onMouseUp={onCellOut}
                   onMouseEnter={() => {
-                    onCellEnter(rowIndex, cellIndex);
+                    onCellEnter(rowIndex, colIndex);
                   }}
-                  className={`eachCell node-${rowIndex}-${cellIndex}`}
+                  className={`eachCell node-${rowIndex}-${colIndex}`}
                 ></div>
               );
             });
