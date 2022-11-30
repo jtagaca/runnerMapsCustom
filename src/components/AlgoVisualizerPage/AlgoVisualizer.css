@@ -21,7 +21,9 @@
 .marker {
   background-color: #66d4ff !important;
 }
-
+.selectedMarker {
+  background-color: #ff0000 !important;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(20, 1fr);

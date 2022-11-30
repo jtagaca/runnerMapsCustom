@@ -4,11 +4,13 @@ import { dijkstraAlgo } from "../../algorithms/dijkstraAlgo";
 import { useHistory } from "react-router-dom";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
+import NumericInput from 'react-numeric-input';
+
 
 const baseGrid = [];
 const rows = 10;
 const columns = 20;
-
+const haversineDistance = require('geodetic-haversine-distance');
 for (var i = 0; i < rows; i++) {
   baseGrid[i] = [];
   for (var j = 0; j < columns; j++) {
@@ -16,9 +18,9 @@ for (var i = 0; i < rows; i++) {
   }
 }
 const predefinedTextVisuals = {};
-predefinedTextVisuals[[1, 9]] = "Head Straight";
-predefinedTextVisuals[[3, 9]] = "Keep Head Straight";
-predefinedTextVisuals[[8, 9]] = "Turn Left";
+predefinedTextVisuals[[1, 9]] = {"direction":"Head Straight", "lat": 35.450630, "long": -119.105934};
+predefinedTextVisuals[[3, 9]] = {"direction":"Keep Head Straight", "lat": 35.450621, "long": -119.105955};
+predefinedTextVisuals[[8, 9]] = {"direction":"Turn Left", "lat": 35.450756, "long": -119.106190};
 
 // console.log(baseGrid);
 
@@ -33,6 +35,9 @@ const AlgoVisualizer = () => {
     endRowIndex: 0,
     endColIndex: 9,
   });
+  const [sortedMarkers, setSortedMarkers] = useState([]);
+  const [currentGeoLocation, setCurrentGeoLocation] = useState({ latitude: 35.450630, longitude: -119.105934 });
+  const [currentMarkersVisible, setCurrentMarkersVisible] = useState([]);
 
   const [show, setShow] = useState(false);
 
@@ -126,12 +131,18 @@ const AlgoVisualizer = () => {
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} visualCell`;
-    }
-    else if (type == "marker") {
+    } else if (type == "marker") {
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} marker`;
-    } else {
+    } 
+    
+    else if (type == "currentmarker") {
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} selectedMarker`;
+    } 
+    else {
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} pathCell`;
@@ -144,6 +155,39 @@ const AlgoVisualizer = () => {
     );
   };
 
+  function getClosestMarkers(){
+    let closestMarkers = [];
+    let tempCurrentMarkersVisible = [];
+    // for currentMarkersVisible
+    for (let i = 0; i < currentMarkersVisible.length; i++) {
+      let [row, col] = currentMarkersVisible[i];
+      let lat = predefinedTextVisuals[[row,col]]['lat'];
+      let long = predefinedTextVisuals[[row,col]]['long'];
+      let markerGeoLocation = {latitude: lat, longitude: long};
+      
+      let distanceBetweenCurrentPosAndMarker = haversineDistance(currentGeoLocation, markerGeoLocation);
+      tempCurrentMarkersVisible.push([row,col])
+      closestMarkers.push([distanceBetweenCurrentPosAndMarker, [row, col]]);
+    }
+    setCurrentMarkersVisible(tempCurrentMarkersVisible);
+    closestMarkers.sort((a, b) => a[0] - b[0]);
+    return closestMarkers;
+
+  }
+  useEffect(() => {
+    if (currentMarkersVisible.length == 0) {
+     return 
+    }
+    let closestMarkers = getClosestMarkers();
+    debugger;
+    let currentTopMarker = closestMarkers[0];
+    let [row, col] = currentTopMarker[1];
+    changeColor(row, col, "currentmarker");
+    console.log(currentGeoLocation)
+
+
+  }, [currentGeoLocation])
+  
   const solveTheGrid = () => {
     const [shortPathList, listOfAllNodes, solvedGrid] = dijkstraAlgo(
       grid,
@@ -157,20 +201,23 @@ const AlgoVisualizer = () => {
         changeColor(node[0], node[1], "visual");
       }, 50 * row);
     }
-
+    let tempDistancesWithKeys =[];
     // Fill path color
     for (let row = 0; row < shortPathList.length; row++) {
       setTimeout(() => {
         const node = shortPathList[row];
-        debugger;
         if ([node[0], node[1]] in predefinedTextVisuals) {
           changeColor(node[0], node[1], "marker");
-          console.log(predefinedTextVisuals[[node[0], node[1]]]);
+          console.log(predefinedTextVisuals[[node[0], node[1]]]['direction']);
+
+          tempDistancesWithKeys.push([node[0], node[1]]);
         } else {
           changeColor(node[0], node[1], "path");
         }
       }, 50 * (row + listOfAllNodes.length));
     }
+    setCurrentMarkersVisible(tempDistancesWithKeys);
+
   };
 
   const toggleWall = (row, col) => {
@@ -250,8 +297,28 @@ const AlgoVisualizer = () => {
     // history.push("/hello");
     window.location.reload();
   };
+
+
+  function test() {
+
+
+    const a = { latitude: 35.450630, longitude: -119.105934 };
+    const b = { latitude: 35.450621, longitude: -119.105955 };
+    let t= haversineDistance(a, b);
+    console.log(t);
+
+  }
+
   return (
     <div className="container text-center">
+      <NumericInput 
+      onChange = {(e)=> setCurrentGeoLocation({latitude: e, longitude: currentGeoLocation.longitude})}
+      step={0.000001} precision={6} value={currentGeoLocation['latitude']}/>
+      <NumericInput 
+      onChange = {(e)=> setCurrentGeoLocation({latitude: currentGeoLocation.latitude, longitude: e})}
+      
+      step={0.000001} precision={6}  value={currentGeoLocation['longitude']}/>
+
       <div className="row middle2 containerborder">
         <Button
           variant="dark"
@@ -259,6 +326,13 @@ const AlgoVisualizer = () => {
           onClick={solveTheGrid}
         >
           Find Path
+        </Button>
+        <Button
+          variant="dark"
+          className="solveBtn col-md-3 mx-3"
+          onClick={test}
+        >
+          test
         </Button>
         <Button
           variant="dark"
