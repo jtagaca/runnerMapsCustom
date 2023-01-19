@@ -25,10 +25,12 @@ predefinedTextVisuals[[8, 9]] = {"direction":"Turn Left", "lat": 35.450756, "lon
 // console.log(baseGrid);
 
 const AlgoVisualizer = () => {
-  const [grid, setGrid] = useState(baseGrid);
+  const [grid, setempGrid] = useState(baseGrid);
   const [isMousePressed, setIsMousePressed] = useState(false);
   const [isMouseDraggingStartPos, setIsMouseDraggingStartPos] = useState(false);
   const [isMouseDraggingEndPos, setIsMouseDraggingEndPos] = useState(false);
+  const [currentRotationDegree, setCurrentRotationDegree] = useState(0.0);
+
   const [initializedPosition, setInitPos] = useState({
     startRowIndex: 9,
     startColIndex: 0,
@@ -49,40 +51,41 @@ const AlgoVisualizer = () => {
   const MAX_PATH_LENGTH = 81;
 
   useEffect(() => {
-    const tGrid = grid;
-    let prevsi = 0,
-      prevsj = 0;
-    let prevei = 0,
-      prevej = 0;
+  
+    const tempGrid = grid;
+    let prevStartRowIndex = 0,
+      prevStartColIndex = 0;
+    let prevEndRowIndex = 0,
+      prevEndColIndex = 0;
     // safety initializationOfStart and end
-    for (let row = 0; row < tGrid.length; row++) {
-      for (let col = 0; col < tGrid[row].length; col++) {
-        if (tGrid[row][col] == 0) {
-          prevsi = row;
-          prevsj = col;
-        } else if (tGrid[row][col] == -10) {
-          prevei = row;
-          prevej = col;
+    for (let row = 0; row < tempGrid.length; row++) {
+      for (let col = 0; col < tempGrid[row].length; col++) {
+        if (tempGrid[row][col] == 0) {
+          prevStartRowIndex = row;
+          prevStartColIndex = col;
+        } else if (tempGrid[row][col] == -10) {
+          prevEndRowIndex = row;
+          prevEndColIndex = col;
         }
       }
     }
 
-    tGrid[prevsi][prevsj] = -1;
-    tGrid[prevei][prevej] = -1;
-    tGrid[initializedPosition.startRowIndex][
+    tempGrid[prevStartRowIndex][prevStartColIndex] = -1;
+    tempGrid[prevEndRowIndex][prevEndColIndex] = -1;
+
+    tempGrid[initializedPosition.startRowIndex][
       initializedPosition.startColIndex
     ] = 0;
-    tGrid[initializedPosition.endRowIndex][initializedPosition.endColIndex] =
+    tempGrid[initializedPosition.endRowIndex][initializedPosition.endColIndex] =
       -10;
-    setGrid([...tGrid]);
     const { startRowIndex, startColIndex, endRowIndex, endColIndex } =
       initializedPosition;
     document.querySelector(
-      `.node-${prevsi}-${prevsj}`
-    ).className = `eachCell node-${prevsi}-${prevsj}`;
+      `.node-${prevStartRowIndex}-${prevStartColIndex}`
+    ).className = `eachCell node-${prevStartRowIndex}-${prevStartColIndex}`;
     document.querySelector(
-      `.node-${prevei}-${prevej}`
-    ).className = `eachCell node-${prevei}-${prevej}`;
+      `.node-${prevEndRowIndex}-${prevEndColIndex}`
+    ).className = `eachCell node-${prevEndRowIndex}-${prevEndColIndex}`;
     document.querySelector(
       `.node-${startRowIndex}-${startColIndex}`
     ).className = `eachCell node-${startRowIndex}-${startColIndex} start`;
@@ -96,7 +99,7 @@ const AlgoVisualizer = () => {
     ];
     for (let i = 0; i < roomNodes.length; i++) {
       let [row, col] = roomNodes[i];
-      tGrid[row][col] = -5;
+      tempGrid[row][col] = -5;
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} room`;
@@ -112,12 +115,19 @@ const AlgoVisualizer = () => {
     ];
     for (let i = 0; i < predefinedWalls.length; i++) {
       let [row, col] = predefinedWalls[i];
-      tGrid[row][col] = -5;
+      tempGrid[row][col] = -5;
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} wall`;
     }
+    setempGrid([...tempGrid]);
+
   }, [initializedPosition]);
+
+  useEffect(() => {
+    const tempGrid = grid;
+    console.log(tempGrid)
+  }, [grid]);
 
   const changeColor = (row, col, type) => {
     if (
@@ -141,7 +151,7 @@ const AlgoVisualizer = () => {
     else if (type == "currentmarker") {
       document.querySelector(
         `.node-${row}-${col}`
-      ).className = `eachCell node-${row}-${col} selectedMarker`;
+      ).className = `eachCell node-${row}-${col} selectedMarker zoomIn`;
     } 
     else {
       document.querySelector(
@@ -203,7 +213,8 @@ const AlgoVisualizer = () => {
       grid,
       initializedPosition
     );
-    setGrid(solvedGrid);
+    debugger;
+    setempGrid(solvedGrid);
     // Fill visualize color
     for (let row = 0; row < listOfAllNodes.length; row++) {
       setTimeout(() => {
@@ -234,16 +245,16 @@ const AlgoVisualizer = () => {
     // if the current location is not a wall then convert it to a wall by changing the color to black and value to -5
     console.log(row, col);
     if (grid[row][col] != -5) {
-      const tGrid = grid;
-      tGrid[row][col] = -5;
-      setGrid([...tGrid]);
+      const tempGrid = grid;
+      tempGrid[row][col] = -5;
+      setempGrid([...tempGrid]);
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} wall`;
     } else {
-      const tGrid = grid;
-      tGrid[row][col] = -1;
-      setGrid([...tGrid]);
+      const tempGrid = grid;
+      tempGrid[row][col] = -1;
+      setempGrid([...tempGrid]);
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col}`;
@@ -311,7 +322,6 @@ const AlgoVisualizer = () => {
 
   function test() {
 
-
     const a = { latitude: 35.450630, longitude: -119.105934 };
     const b = { latitude: 35.450621, longitude: -119.105955 };
     let t= haversineDistance(a, b);
@@ -319,6 +329,8 @@ const AlgoVisualizer = () => {
 
   }
 
+
+  let rotationDegree = "180";
   return (
     <div className="container text-center">
       <NumericInput 
@@ -359,7 +371,13 @@ const AlgoVisualizer = () => {
           Reset
         </Button>
       </div>
-      <div className="gridContainer">
+      
+      <div className="gridContainer"
+      
+      style={{
+        transform: "rotate("+ currentRotationDegree +"deg)"
+      }}
+      >
         <div className="grid">
           {grid.map((row, rowIndex) => {
             return row.map((cell, colIndex) => {

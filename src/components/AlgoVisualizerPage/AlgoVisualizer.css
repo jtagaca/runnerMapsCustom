@@ -5,12 +5,35 @@
   width: 100%;
   justify-content: space-evenly;
 }
-.room{
+.room {
   background-color: #ae00ff !important;
 }
 .solveBtnContainer {
   padding: 20px;
 }
+
+.rotate {
+  transform: rotate(90deg) !important;
+}
+
+
+.zoom {
+  zoom: 150%;
+}
+.zoomIn {
+  animation: zoomIn 0.5s;
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/* create a zoom in animation and make the selected cell in the middle */
+
 
 .gridContainer {
   background-color: azure;
