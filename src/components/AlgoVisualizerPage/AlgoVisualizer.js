@@ -33,7 +33,8 @@ predefinedTextVisuals[[8, 9]] = {
   long: -119.10619,
 };
 
-// console.log(baseGrid);
+
+// //console.log(baseGrid);
 
 const AlgoVisualizer = () => {
   const [grid, setGrid] = useState(baseGrid);
@@ -46,10 +47,10 @@ const AlgoVisualizer = () => {
   const [selectingWall, setSelectingWall] = useState(false);
 
   const [initializedPosition, setInitPos] = useState({
-    startRowIndex: 9,
-    startColIndex: 0,
-    endRowIndex: 0,
-    endColIndex: 9,
+    startRowIndex: 4,
+    startColIndex: 7,
+    endRowIndex: 4,
+    endColIndex: 15,
   });
   const [previous, setPrevious] = useState(null);
   const [sortedMarkers, setSortedMarkers] = useState([]);
@@ -104,39 +105,13 @@ const AlgoVisualizer = () => {
       `.node-${endRowIndex}-${endColIndex}`
     ).className = `eachCell node-${endRowIndex}-${endColIndex} end`;
 
-    let roomNodes = [
-      [0, 0],
-      [9, 5],
-    ];
-    for (let i = 0; i < roomNodes.length; i++) {
-      let [row, col] = roomNodes[i];
-      tempGrid[row][col] = "ROOM";
-      document.querySelector(
-        `.node-${row}-${col}`
-      ).className = `eachCell node-${row}-${col} room`;
-    }
-
-    let predefinedWalls = [
-      [0, 2],
-      [1, 2],
-      [2, 2],
-      [3, 2],
-      [2, 0],
-      [1, 0],
-    ];
-    for (let i = 0; i < predefinedWalls.length; i++) {
-      let [row, col] = predefinedWalls[i];
-      tempGrid[row][col] = "WALL";
-      document.querySelector(
-        `.node-${row}-${col}`
-      ).className = `eachCell node-${row}-${col} wall`;
-    }
+  
     setGrid([...tempGrid]);
   }, [initializedPosition]);
 
   useEffect(() => {
     const tempGrid = grid;
-    console.log(tempGrid);
+    //console.log(tempGrid);
     // save the current grid in the local storage
     localStorage.setItem("grid", JSON.stringify(tempGrid));
   }, [grid]);
@@ -171,6 +146,7 @@ const AlgoVisualizer = () => {
               `.node-${row}-${col}`
             ).className = `eachCell node-${row}-${col} room`;
           }
+        
         }
       }
       setGrid([...tempGrid]);
@@ -253,7 +229,7 @@ const AlgoVisualizer = () => {
     }
     let [row, col] = currentTopMarker[1];
     changeColor(row, col, "currentmarker");
-    console.log(currentGeoLocation);
+    //console.log(currentGeoLocation);
     setPrevious(currentTopMarker[1]);
   }, [currentGeoLocation]);
 
@@ -277,7 +253,7 @@ const AlgoVisualizer = () => {
         const node = shortPathList[row];
         if ([node[0], node[1]] in predefinedTextVisuals) {
           changeColor(node[0], node[1], "marker");
-          console.log(predefinedTextVisuals[[node[0], node[1]]]["direction"]);
+          //console.log(predefinedTextVisuals[[node[0], node[1]]]["direction"]);
 
           tempDistancesWithKeys.push([node[0], node[1]]);
         } else {
@@ -290,7 +266,7 @@ const AlgoVisualizer = () => {
 
   const toggleWall = (row, col) => {
     // if the current location is not a wall then convert it to a wall by changing the color to black and value to "WALL"
-    console.log(row, col);
+    //console.log(row, col);
     if (grid[row][col] != "WALL") {
       const tempGrid = grid;
       tempGrid[row][col] = "WALL";
@@ -310,7 +286,7 @@ const AlgoVisualizer = () => {
 
   const toggleRoom = (row, col) => {
     // if the current location is not a room then convert it to a room by changing the color to blue and value to "ROOM"
-    console.log(row, col);
+    //console.log(row, col);
     if (grid[row][col] != "ROOM") {
       const tempGrid = grid;
       tempGrid[row][col] = "ROOM";
@@ -332,9 +308,12 @@ const AlgoVisualizer = () => {
     setSelectingRoom(!selectingRoom);
     setSelectingWall(false);
   };
-
+  const selectAWallButton = () => {
+    setSelectingRoom(false);
+    setSelectingWall(!selectingWall);
+  };
   useEffect (() => {
-    console.log("selecting room", selectingRoom);
+    //console.log("selecting room", selectingRoom);
 
   }, [selectingRoom])
   const onCellEnter = (row, col) => {
@@ -365,6 +344,8 @@ const AlgoVisualizer = () => {
   //TODO implement a modal
   
   const onCellIn = (row, col) => {
+    console.log("mouse enter", row, col);
+
     if (
       row == initializedPosition.startRowIndex &&
       col == initializedPosition.startColIndex
@@ -378,9 +359,13 @@ const AlgoVisualizer = () => {
       setIsMouseDraggingEndPos(true);
       return;
     }
-    debugger;
+    ;
     setIsMousePressed(true);
-    // toggleWall(row, col);
+    if (selectingRoom) {
+      toggleRoom(row, col);
+    } else if (selectingWall) {
+      toggleWall(row, col);
+    }
   };
 
   const onCellOut = () => {
@@ -404,7 +389,7 @@ const AlgoVisualizer = () => {
     const a = { latitude: 35.45063, longitude: -119.105934 };
     const b = { latitude: 35.450621, longitude: -119.105955 };
     let t = haversineDistance(a, b);
-    console.log(t);
+    //console.log(t);
   }
 
   let rotationDegree = "180";
@@ -458,6 +443,9 @@ const AlgoVisualizer = () => {
 
         <Button onClick={selectARoomButton}>
           Plot a room
+        </Button>
+        <Button onClick={selectAWallButton}>
+          Plot a wall
         </Button>
         <Button
           variant="dark"
