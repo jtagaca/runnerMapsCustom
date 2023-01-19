@@ -15,12 +15,12 @@ export const dijkstraAlgo = (grid, initPos) => {
         // we can also have an ajacent map check instead of only top left bottom right,
         // as long as it is in bounds and not equal to a wall then add it to the queue
         //UP
-        if (currentRowIdx != 0 && tGrid[currentRowIdx - 1][currentColIdx] != -5) {
+        if (currentRowIdx != 0 && tGrid[currentRowIdx - 1][currentColIdx] != "WALL" && tGrid[currentRowIdx - 1][currentColIdx] != "ROOM") {
             if (tGrid[currentRowIdx - 1][currentColIdx] == -10) {
                 tGrid[currentRowIdx - 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
-            else if (tGrid[currentRowIdx - 1][currentColIdx] == -1) {
+            else if (tGrid[currentRowIdx - 1][currentColIdx] == -1 ) {
                 tGrid[currentRowIdx - 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
                 queue.enqueue([currentRowIdx - 1, currentColIdx]);
                 listOfAllNodes.push([currentRowIdx - 1, currentColIdx]);
@@ -29,7 +29,7 @@ export const dijkstraAlgo = (grid, initPos) => {
         }
 
         //DOWN
-        if (currentRowIdx != 9 && tGrid[currentRowIdx + 1][currentColIdx] != -5) {
+        if (currentRowIdx != 9 && tGrid[currentRowIdx + 1][currentColIdx] != "WALL" && tGrid[currentRowIdx + 1][currentColIdx] != "ROOM" ) {
             if (tGrid[currentRowIdx + 1][currentColIdx] == -10) {
                 tGrid[currentRowIdx + 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
@@ -43,7 +43,7 @@ export const dijkstraAlgo = (grid, initPos) => {
         }
 
         //LEFT
-        if (currentColIdx != 0 && tGrid[currentRowIdx][currentColIdx - 1] != -5) {
+        if (currentColIdx != 0 && tGrid[currentRowIdx][currentColIdx - 1] != "WALL" && tGrid[currentRowIdx][currentColIdx - 1] != "ROOM") {
             if (tGrid[currentRowIdx][currentColIdx - 1] == -10) {
                 tGrid[currentRowIdx][currentColIdx - 1] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
@@ -57,7 +57,7 @@ export const dijkstraAlgo = (grid, initPos) => {
         }
 
         //RIGHT
-        if (currentColIdx != (grid[0].length-1) && tGrid[currentRowIdx][currentColIdx + 1] != -5) {
+        if (currentColIdx != (grid[0].length-1) && tGrid[currentRowIdx][currentColIdx + 1] != "WALL" && tGrid[currentRowIdx][currentColIdx + 1] != "ROOM") {
             if (tGrid[currentRowIdx][currentColIdx + 1] == -10) {
                 tGrid[currentRowIdx][currentColIdx + 1] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;

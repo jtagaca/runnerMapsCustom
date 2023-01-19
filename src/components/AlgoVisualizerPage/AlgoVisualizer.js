@@ -25,7 +25,7 @@ predefinedTextVisuals[[8, 9]] = {"direction":"Turn Left", "lat": 35.450756, "lon
 // console.log(baseGrid);
 
 const AlgoVisualizer = () => {
-  const [grid, setempGrid] = useState(baseGrid);
+  const [grid, setGrid] = useState(baseGrid);
   const [isMousePressed, setIsMousePressed] = useState(false);
   const [isMouseDraggingStartPos, setIsMouseDraggingStartPos] = useState(false);
   const [isMouseDraggingEndPos, setIsMouseDraggingEndPos] = useState(false);
@@ -99,7 +99,7 @@ const AlgoVisualizer = () => {
     ];
     for (let i = 0; i < roomNodes.length; i++) {
       let [row, col] = roomNodes[i];
-      tempGrid[row][col] = -5;
+      tempGrid[row][col] = "ROOM";
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} room`;
@@ -115,19 +115,58 @@ const AlgoVisualizer = () => {
     ];
     for (let i = 0; i < predefinedWalls.length; i++) {
       let [row, col] = predefinedWalls[i];
-      tempGrid[row][col] = -5;
+      tempGrid[row][col] = "WALL";
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} wall`;
     }
-    setempGrid([...tempGrid]);
+    setGrid([...tempGrid]);
 
-  }, [initializedPosition]);
+  }, [initializedPosition] );
 
   useEffect(() => {
     const tempGrid = grid;
     console.log(tempGrid)
+    // save the current grid in the local storage
+    localStorage.setItem("grid", JSON.stringify(tempGrid));
   }, [grid]);
+
+  // create a function to save the grid to a text file using stringified JSON
+  const saveGrid = () => {
+    const gridString = JSON.stringify(grid);
+    const element = document.createElement("a");
+    const file = new Blob([gridString], { type: "text/plain" });
+    element.href = URL.createObjectURL(file);
+    element.download = "grid.txt";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  };
+
+  // create a function to load the grid from a text file using stringified JSON
+  const loadGrid = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const text = e.target.result;
+      const tempGrid = JSON.parse(text);
+      // loop over the tempGrid and change the color of WALL and ROOM
+      for (let row = 0; row < tempGrid.length; row++) {
+        for (let col = 0; col < tempGrid[row].length; col++) {
+          if (tempGrid[row][col] == "WALL") {
+            document.querySelector(
+              `.node-${row}-${col}`
+            ).className = `eachCell node-${row}-${col} wall`;
+          } else if (tempGrid[row][col] == "ROOM") {
+            document.querySelector(
+              `.node-${row}-${col}`
+            ).className = `eachCell node-${row}-${col} room`;
+          }
+        }
+      }
+      setGrid([...tempGrid]);
+    };
+    reader.readAsText(file);
+  };
 
   const changeColor = (row, col, type) => {
     if (
@@ -195,7 +234,6 @@ const AlgoVisualizer = () => {
     if (previous != null && currentTopMarker[1] == previous  ) {
       return
     }
-    debugger;
     if (previous != null) {
       let [prevRow, prevCol] = previous;
       changeColor(prevRow, prevCol, "marker");
@@ -213,8 +251,7 @@ const AlgoVisualizer = () => {
       grid,
       initializedPosition
     );
-    debugger;
-    setempGrid(solvedGrid);
+    setGrid(solvedGrid);
     // Fill visualize color
     for (let row = 0; row < listOfAllNodes.length; row++) {
       setTimeout(() => {
@@ -242,19 +279,19 @@ const AlgoVisualizer = () => {
   };
 
   const toggleWall = (row, col) => {
-    // if the current location is not a wall then convert it to a wall by changing the color to black and value to -5
+    // if the current location is not a wall then convert it to a wall by changing the color to black and value to "WALL"
     console.log(row, col);
-    if (grid[row][col] != -5) {
+    if (grid[row][col] != "WALL") {
       const tempGrid = grid;
-      tempGrid[row][col] = -5;
-      setempGrid([...tempGrid]);
+      tempGrid[row][col] = "WALL";
+      setGrid([...tempGrid]);
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} wall`;
     } else {
       const tempGrid = grid;
       tempGrid[row][col] = -1;
-      setempGrid([...tempGrid]);
+      setGrid([...tempGrid]);
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col}`;
@@ -363,6 +400,16 @@ const AlgoVisualizer = () => {
         >
           Instructions
         </Button>
+        <Button
+          variant="dark"
+          className="solveBtn col-md-3 mx-3"
+          onClick={saveGrid}
+        >
+          Save Grid
+        </Button>
+        {/* make a button to use the loadGrid function */}
+        <input type="file" onChange={loadGrid} />
+        
         <Button
           variant="dark"
           className="solveBtn col-md-3 mx-3"
