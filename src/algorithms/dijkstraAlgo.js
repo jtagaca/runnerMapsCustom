@@ -3,7 +3,6 @@ import { Queue } from '../Queue/Queue';
 
 export const dijkstraAlgo = (grid, initPos) => {
     const {startRowIndex, startColIndex, endRowIndex, endColIndex} = initPos;
-
     const listOfAllNodes = [];
     const tGrid = grid;
     const queue = new Queue();
@@ -16,7 +15,7 @@ export const dijkstraAlgo = (grid, initPos) => {
         // as long as it is in bounds and not equal to a wall then add it to the queue
         //UP
         if (currentRowIdx != 0 && tGrid[currentRowIdx - 1][currentColIdx] != "WALL" && tGrid[currentRowIdx - 1][currentColIdx] != "ROOM") {
-            if (tGrid[currentRowIdx - 1][currentColIdx] == -10) {
+            if (tGrid[currentRowIdx - 1][currentColIdx] == -50) {
                 tGrid[currentRowIdx - 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
@@ -27,10 +26,10 @@ export const dijkstraAlgo = (grid, initPos) => {
             }
             else { tGrid[currentRowIdx - 1][currentColIdx] = Math.min(tGrid[currentRowIdx - 1][currentColIdx], tGrid[currentRowIdx][currentColIdx] + 1) }
         }
-
+        // row length of the grid
         //DOWN
-        if (currentRowIdx != 9 && tGrid[currentRowIdx + 1][currentColIdx] != "WALL" && tGrid[currentRowIdx + 1][currentColIdx] != "ROOM" ) {
-            if (tGrid[currentRowIdx + 1][currentColIdx] == -10) {
+        if (currentRowIdx != grid.length-1 && tGrid[currentRowIdx + 1][currentColIdx] != "WALL" && tGrid[currentRowIdx + 1][currentColIdx] != "ROOM" ) {
+            if (tGrid[currentRowIdx + 1][currentColIdx] == -50) {
                 tGrid[currentRowIdx + 1][currentColIdx] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
@@ -44,7 +43,7 @@ export const dijkstraAlgo = (grid, initPos) => {
 
         //LEFT
         if (currentColIdx != 0 && tGrid[currentRowIdx][currentColIdx - 1] != "WALL" && tGrid[currentRowIdx][currentColIdx - 1] != "ROOM") {
-            if (tGrid[currentRowIdx][currentColIdx - 1] == -10) {
+            if (tGrid[currentRowIdx][currentColIdx - 1] == -50) {
                 tGrid[currentRowIdx][currentColIdx - 1] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
@@ -58,7 +57,7 @@ export const dijkstraAlgo = (grid, initPos) => {
 
         //RIGHT
         if (currentColIdx != (grid[0].length-1) && tGrid[currentRowIdx][currentColIdx + 1] != "WALL" && tGrid[currentRowIdx][currentColIdx + 1] != "ROOM") {
-            if (tGrid[currentRowIdx][currentColIdx + 1] == -10) {
+            if (tGrid[currentRowIdx][currentColIdx + 1] == -50) {
                 tGrid[currentRowIdx][currentColIdx + 1] = tGrid[currentRowIdx][currentColIdx] + 1;
                 break;
             }
@@ -94,7 +93,7 @@ const findShortPath = (grid, initPos) => {
             continue;
         }
         //DOWN
-        if (currentRowIdx != 9 && grid[currentRowIdx + 1][currentColIdx] == grid[currentRowIdx][currentColIdx] - 1) {
+        if (currentRowIdx != grid.length-1 && grid[currentRowIdx + 1][currentColIdx] == grid[currentRowIdx][currentColIdx] - 1) {
             listOfNodes.push([currentRowIdx + 1, currentColIdx]);
             currentRowIdx++;
             continue;

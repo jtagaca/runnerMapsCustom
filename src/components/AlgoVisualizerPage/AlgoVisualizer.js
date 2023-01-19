@@ -7,8 +7,8 @@ import Button from "react-bootstrap/Button";
 import NumericInput from "react-numeric-input";
 
 const baseGrid = [];
-const rows = 10;
-const columns = 20;
+const rows = 30;
+const columns = 40;
 const haversineDistance = require("geodetic-haversine-distance");
 for (var i = 0; i < rows; i++) {
   baseGrid[i] = [];
@@ -61,11 +61,6 @@ const AlgoVisualizer = () => {
 
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-  let history = useHistory();
-
-  const MAX_PATH_LENGTH = 81;
 
   useEffect(() => {
     const tempGrid = grid;
@@ -79,7 +74,7 @@ const AlgoVisualizer = () => {
         if (tempGrid[row][col] == 0) {
           prevStartRowIndex = row;
           prevStartColIndex = col;
-        } else if (tempGrid[row][col] == -10) {
+        } else if (tempGrid[row][col] == -50) {
           prevEndRowIndex = row;
           prevEndColIndex = col;
         }
@@ -93,7 +88,7 @@ const AlgoVisualizer = () => {
       initializedPosition.startColIndex
     ] = 0;
     tempGrid[initializedPosition.endRowIndex][initializedPosition.endColIndex] =
-      -10;
+      -50;
     const { startRowIndex, startColIndex, endRowIndex, endColIndex } =
       initializedPosition;
     document.querySelector(
@@ -273,7 +268,7 @@ const AlgoVisualizer = () => {
       setTimeout(() => {
         const node = listOfAllNodes[row];
         changeColor(node[0], node[1], "visual");
-      }, 50 * row);
+      }, 1 * row);
     }
     let tempDistancesWithKeys = [];
     // Fill path color
@@ -288,7 +283,7 @@ const AlgoVisualizer = () => {
         } else {
           changeColor(node[0], node[1], "path");
         }
-      }, 50 * (row + listOfAllNodes.length));
+      }, 1 * (row + listOfAllNodes.length));
     }
     setCurrentMarkersVisible(tempDistancesWithKeys);
   };
