@@ -114,16 +114,6 @@ const AlgoVisualizer = () => {
     localStorage.setItem("grid", JSON.stringify(tempGrid));
   }, [grid]);
 
-  // create a function to save the grid to a text file using stringified JSON
-  // const saveGrid = () => {
-  //   const gridString = JSON.stringify(grid);
-  //   const element = document.createElement("a");
-  //   const file = new Blob([gridString], { type: "text/plain" });
-  //   element.href = URL.createObjectURL(file);
-  //   element.download = "grid.txt";
-  //   document.body.appendChild(element); // Required for this to work in FireFox
-  //   element.click();
-  // };
   const saveGrid = () => {
     // create a json file with the grid and images as keys
     const gridString = JSON.stringify({
@@ -255,35 +245,185 @@ const AlgoVisualizer = () => {
     setPrevious(currentTopMarker[1]);
   }, [currentGeoLocation]);
 
+  function getDirections(tempNodes) {
+    let next = null;
+    for (let i = 0; i < tempNodes.length - 1; i++) {
+      if (i == 0) {
+        let [row1, col1] = [tempNodes[i].row, tempNodes[i].col];
+        let [row2, col2] = [tempNodes[i + 1].row, tempNodes[i + 1].col];
+        if (row1 == row2) {
+          if (col1 < col2) {
+            tempNodes[i].direction = "right";
+          } else {
+            tempNodes[i].direction = "left";
+          }
+        } else if (col1 == col2) {
+          if (row1 < row2) {
+            tempNodes[i].direction = "down";
+          } else {
+            tempNodes[i].direction = "up";
+          }
+        }
+      } else {
+        let [row1, col1] = [tempNodes[i].row, tempNodes[i].col];
+        let [row2, col2] = [tempNodes[i + 1].row, tempNodes[i + 1].col];
+        if (tempNodes[i - 1].direction == "right") {
+          if (row1 == row2) {
+            if (col1 < col2) {
+              tempNodes[i].direction = "right";
+              tempNodes[i].userDirection = "";
+            } else {
+              tempNodes[i].direction = "left";
+              tempNodes[i].userDirection = "";
+            }
+          } else if (col1 == col2) {
+            if (row1 < row2) {
+              tempNodes[i].direction = "down";
+              tempNodes[i].userDirection = "right";
+            } else {
+              tempNodes[i].direction = "up";
+              tempNodes[i].userDirection = "left";
+            }
+          }
+        } else if (tempNodes[i - 1].direction == "left") {
+          if (row1 == row2) {
+            if (col1 < col2) {
+              tempNodes[i].direction = "right";
+              tempNodes[i].userDirection = "";
+            } else {
+              tempNodes[i].direction = "left";
+              tempNodes[i].userDirection = "";
+            }
+          } else if (col1 == col2) {
+            if (row1 < row2) {
+              tempNodes[i].direction = "down";
+              tempNodes[i].userDirection = "left";
+            } else {
+              tempNodes[i].direction = "up";
+              tempNodes[i].userDirection = "right";
+            }
+          }
+        } else if (tempNodes[i - 1].direction == "up") {
+          if (row1 == row2) {
+            if (col1 < col2) {
+              tempNodes[i].direction = "right";
+              tempNodes[i].userDirection = "right";
+            } else {
+              tempNodes[i].direction = "left";
+              tempNodes[i].userDirection = "left";
+            }
+          } else if (col1 == col2) {
+            if (row1 < row2) {
+              tempNodes[i].direction = "down";
+              tempNodes[i].userDirection = "";
+            } else {
+              tempNodes[i].direction = "up";
+              tempNodes[i].userDirection = "";
+            }
+          }
+        } else if (tempNodes[i - 1].direction == "down") {
+          if (row1 == row2) {
+            if (col1 < col2) {
+              tempNodes[i].direction = "right";
+              tempNodes[i].userDirection = "left";
+            } else {
+              tempNodes[i].direction = "left";
+              tempNodes[i].userDirection = "right";
+            }
+          } else if (col1 == col2) {
+            if (row1 < row2) {
+              tempNodes[i].direction = "down";
+              tempNodes[i].userDirection = "";
+            } else {
+              tempNodes[i].direction = "up";
+              tempNodes[i].userDirection = "";
+            }
+          }
+        }
+      }
+    }
+    return tempNodes;
+  }
   const solveTheGrid = () => {
     const [shortPathList, listOfAllNodes, solvedGrid] = dijkstraAlgo(
       grid,
       initializedPosition
     );
     setGrid(solvedGrid);
-    // Fill visualize color
+    // create nodes with row and col as well as direction from the shortPathList
+    let tempNodes = [];
+    tempNodes.push({
+      key: 0,
+      row: initializedPosition.endRowIndex,
+      col: initializedPosition.endColIndex,
+      direction: null,
+      userDirection: null,
+    });
+    for (let i = 0; i < shortPathList.length; i++) {
+      let [row, col] = shortPathList[i];
+      tempNodes.push({
+        key: i + 1,
+        row: row,
+        col: col,
+        direction: null,
+        userDirection: null,
+      });
+    }
+    tempNodes.push({
+      key: shortPathList.length + 1,
+      row: initializedPosition.startRowIndex,
+      col: initializedPosition.startColIndex,
+      direction: null,
+      userDirection: null,
+    });
+    // sort the nodes based on the key smallest to biggest
+    let sortedNodes = tempNodes.sort((a, b) => a.key - b.key);
+    // remove the last node
+    let nodes = getDirections(sortedNodes);
+    nodes.pop();
+    // for nodes
+    // add a text to the html elemet to the nodes based on the direction
+
     for (let row = 0; row < listOfAllNodes.length; row++) {
       setTimeout(() => {
         const node = listOfAllNodes[row];
         changeColor(node[0], node[1], "visual");
       }, 1 * row);
     }
-    let tempDistancesWithKeys = [];
-    // Fill path color
-    for (let row = 0; row < shortPathList.length; row++) {
-      setTimeout(() => {
-        const node = shortPathList[row];
-        if ([node[0], node[1]] in predefinedTextVisuals) {
-          changeColor(node[0], node[1], "marker");
-          //console.log(predefinedTextVisuals[[node[0], node[1]]]["direction"]);
+    // for each node in nodes change the color using path and add a text to the cell using the direction
 
-          tempDistancesWithKeys.push([node[0], node[1]]);
-        } else {
-          changeColor(node[0], node[1], "path");
+    // let tempDistancesWithKeys = [];
+    // // Fill path color
+    // for (let row = 0; row < nodes.length; row++) {
+    //   setTimeout(() => {
+    //     const node = shortPathList[row];
+    //     if ([node[0], node[1]] in predefinedTextVisuals) {
+    //       changeColor(node[0], node[1], "marker");
+    //       // add a text to the cell
+
+    //       tempDistancesWithKeys.push([node[0], node[1]]);
+    //     } else {
+    //       changeColor(node[0], node[1], "path");
+    //     }
+    //   }, 1 * (row + listOfAllNodes.length));
+    // }
+    for (let row = 0; row < nodes.length; row++) {
+      setTimeout(() => {
+        const node = nodes[row];
+
+        changeColor(node.row, node.col, "path");
+        // add a text to the cell
+        // document.querySelector(
+        //   `.node-${node.row}-${node.col}`
+        // ).innerHTML = `<div class="text">${node.direction}</div>`;
+        if (row > 0) {
+          document.querySelector(
+            `.node-${node.row}-${node.col}`
+          ).innerHTML = `<div class="text">${node.userDirection}</div>`;
         }
       }, 1 * (row + listOfAllNodes.length));
     }
-    setCurrentMarkersVisible(tempDistancesWithKeys);
+    // setCurrentMarkersVisible(tempDistancesWithKeys);
   };
 
   const toggleWall = (row, col) => {
@@ -296,6 +436,8 @@ const AlgoVisualizer = () => {
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} wall`;
+      // add a text to the cell
+      //
     } else {
       const tempGrid = grid;
       tempGrid[row][col] = -1;
