@@ -33,7 +33,6 @@ predefinedTextVisuals[[8, 9]] = {
   long: -119.10619,
 };
 
-
 // //console.log(baseGrid);
 
 const AlgoVisualizer = () => {
@@ -42,9 +41,17 @@ const AlgoVisualizer = () => {
   const [isMouseDraggingStartPos, setIsMouseDraggingStartPos] = useState(false);
   const [isMouseDraggingEndPos, setIsMouseDraggingEndPos] = useState(false);
   const [currentRotationDegree, setCurrentRotationDegree] = useState(0.0);
+  const [currentSelectedImages, setCurrentSelectedImages] = useState([]);
+  const [currentSelectedWalls, setCurrentSelectedWalls] = useState([]);
+  const [currentSelectedRooms, setCurrentSelectedRooms] = useState([]);
+  const [currentSelectedSizeOfGrid, setCurrentSelectedSizeOfGrid] = useState({
+    row: 30,
+    col: 40,
+  });
 
   const [selectingRoom, setSelectingRoom] = useState(false);
   const [selectingWall, setSelectingWall] = useState(false);
+  const [selectingImage, setSelectingImage] = useState(false);
 
   const [initializedPosition, setInitPos] = useState({
     startRowIndex: 4,
@@ -53,15 +60,11 @@ const AlgoVisualizer = () => {
     endColIndex: 15,
   });
   const [previous, setPrevious] = useState(null);
-  const [sortedMarkers, setSortedMarkers] = useState([]);
   const [currentGeoLocation, setCurrentGeoLocation] = useState({
     latitude: 35.45063,
     longitude: -119.105934,
   });
   const [currentMarkersVisible, setCurrentMarkersVisible] = useState([]);
-
-  const [show, setShow] = useState(false);
-
 
   useEffect(() => {
     const tempGrid = grid;
@@ -105,7 +108,6 @@ const AlgoVisualizer = () => {
       `.node-${endRowIndex}-${endColIndex}`
     ).className = `eachCell node-${endRowIndex}-${endColIndex} end`;
 
-  
     setGrid([...tempGrid]);
   }, [initializedPosition]);
 
@@ -116,42 +118,86 @@ const AlgoVisualizer = () => {
     localStorage.setItem("grid", JSON.stringify(tempGrid));
   }, [grid]);
 
-  // create a function to save the grid to a text file using stringified JSON
   const saveGrid = () => {
-    const gridString = JSON.stringify(grid);
+    // create a json file with the grid and images as keys
+
+    const gridString = JSON.stringify({
+      currentSelectedSizeOfGrid,
+      currentSelectedImages,
+      currentSelectedWalls,
+      currentSelectedRooms,
+    });
     const element = document.createElement("a");
     const file = new Blob([gridString], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
-    element.download = "grid.txt";
+    element.download = "grid.json";
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
   };
 
+  useEffect(() => {
+    console.log("useEffect");
+    // console.log("images" + currentSelectedImages);
+    // console.log("Walls" + currentSelectedWalls);
+    console.log("Rooms" + currentSelectedRooms);
+
+    // console.log("Size of Grid" + currentSelectedSizeOfGrid.row);
+  }, [
+    currentSelectedImages,
+    currentSelectedWalls,
+    currentSelectedRooms,
+    currentSelectedSizeOfGrid,
+  ]);
+
+  const loadGrid = () => {
+    const element = document.createElement("input");
+    element.type = "file";
+    element.accept = "application/json";
+    element.addEventListener("change", (event) => {
+      const fileReader = new FileReader();
+      fileReader.onloadend = (e) => {
+        const gridString = e.target.result;
+        const gridObject = JSON.parse(gridString);
+
+        setCurrentSelectedSizeOfGrid(gridObject.currentSelectedSizeOfGrid);
+        setCurrentSelectedImages(gridObject.currentSelectedImages);
+        setCurrentSelectedWalls(gridObject.currentSelectedWalls);
+        setCurrentSelectedRooms(gridObject.currentSelectedRooms);
+      };
+
+      fileReader.readAsText(event.target.files[0]);
+    });
+
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+    buildGrid();
+  };
   // create a function to load the grid from a text file using stringified JSON
-  const loadGrid = (event) => {
-    const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const text = e.target.result;
-      const tempGrid = JSON.parse(text);
-      // loop over the tempGrid and change the color of WALL and ROOM
-      for (let row = 0; row < tempGrid.length; row++) {
-        for (let col = 0; col < tempGrid[row].length; col++) {
-          if (tempGrid[row][col] == "WALL") {
-            document.querySelector(
-              `.node-${row}-${col}`
-            ).className = `eachCell node-${row}-${col} wall`;
-          } else if (tempGrid[row][col] == "ROOM") {
-            document.querySelector(
-              `.node-${row}-${col}`
-            ).className = `eachCell node-${row}-${col} room`;
-          }
-        
-        }
+
+  const buildGrid = () => {
+    const tempGrid = [];
+    for (let row = 0; row < currentSelectedSizeOfGrid.row; row++) {
+      const currentRow = [];
+      for (let col = 0; col < currentSelectedSizeOfGrid.col; col++) {
+        currentRow.push(-1);
       }
-      setGrid([...tempGrid]);
-    };
-    reader.readAsText(file);
+      tempGrid.push(currentRow);
+    }
+    // for every currentSelectWalls and currentSelectedRooms add it to the grid
+    currentSelectedWalls.forEach((wall) => {
+      tempGrid[wall.row][wall.col] = "WALL";
+    });
+    currentSelectedRooms.forEach((room) => {
+      tempGrid[room.row][room.col] = "ROOM";
+    });
+    // set the start and end nodes
+    tempGrid[initializedPosition.startRowIndex][
+      initializedPosition.startColIndex
+    ] = 0;
+    tempGrid[initializedPosition.endRowIndex][initializedPosition.endColIndex] =
+      -50;
+
+    setGrid(tempGrid);
   };
 
   const changeColor = (row, col, type) => {
@@ -265,57 +311,107 @@ const AlgoVisualizer = () => {
   };
 
   const toggleWall = (row, col) => {
-    // if the current location is not a wall then convert it to a wall by changing the color to black and value to "WALL"
-    //console.log(row, col);
-    if (grid[row][col] != "WALL") {
+    // if the row and col are not in setCurrentSelectedWalls then add it to the array and change the color to wall
+    if (currentSelectedWalls.includes([row, col])) {
+      const tempGrid = grid;
+      tempGrid[row][col] = -1;
+      setGrid([...tempGrid]);
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col}`;
+      setCurrentSelectedWalls((prev) => {
+        return prev.filter((item) => item != [row, col]);
+      });
+    } else {
       const tempGrid = grid;
       tempGrid[row][col] = "WALL";
       setGrid([...tempGrid]);
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} wall`;
-    } else {
+      setCurrentSelectedWalls((prev) => {
+        return [...prev, [row, col]];
+      });
+    }
+  };
+
+  const toggleRoom = (row, col) => {
+    // if the row and col are not in setCurrentSelectedRooms then add it to the array and change the color to room
+    if (currentSelectedRooms.includes([row, col])) {
       const tempGrid = grid;
       tempGrid[row][col] = -1;
       setGrid([...tempGrid]);
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col}`;
-    }
-  };
-
-  const toggleRoom = (row, col) => {
-    // if the current location is not a room then convert it to a room by changing the color to blue and value to "ROOM"
-    //console.log(row, col);
-    if (grid[row][col] != "ROOM") {
+      setCurrentSelectedRooms((prev) => {
+        return prev.filter((item) => item != [row, col]);
+      });
+    } else {
       const tempGrid = grid;
       tempGrid[row][col] = "ROOM";
       setGrid([...tempGrid]);
       document.querySelector(
         `.node-${row}-${col}`
-      ).className = `eachCell node-${row}-${col} room`;
-    } else {
-      const tempGrid = grid;
-      tempGrid[row][col] = -1;
-      setGrid([...tempGrid]);
-      document.querySelector(
-        `.node-${row}-${col}`
-      ).className = `eachCell node-${row}-${col}`;
+      ).className = `eachCell node-${row}-${col} room`; //changed wall to room
+      setCurrentSelectedRooms((prev) => {
+        //changed Walls to Rooms
+        return [...prev, [row, col]]; //changed Walls to Rooms
+      });
     }
   };
 
+  // const toggleRoom = (row, col) => {
+  //   if (grid[row][col] != "ROOM") {
+  //     const tempGrid = grid;
+  //     tempGrid[row][col] = "ROOM";
+  //     setGrid([...tempGrid]);
+  //     document.querySelector(
+  //       `.node-${row}-${col}`
+  //     ).className = `eachCell node-${row}-${col} room`;
+  //   } else {
+  //     const tempGrid = grid;
+  //     tempGrid[row][col] = -1;
+  //     setGrid([...tempGrid]);
+  //     document.querySelector(
+  //       `.node-${row}-${col}`
+  //     ).className = `eachCell node-${row}-${col}`;
+  //   }
+  // };
+  const toggleAnImage = (row, col) => {
+    let currentCell = [row, col];
+    let tempCurrentSelectedImages = currentSelectedImages;
+    if (tempCurrentSelectedImages.includes(currentCell)) {
+      tempCurrentSelectedImages = tempCurrentSelectedImages.filter(
+        (item) => item != currentCell
+      );
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col}`;
+    } else {
+      tempCurrentSelectedImages.push(currentCell);
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} marker`;
+    }
+    debugger;
+    setCurrentSelectedImages([...tempCurrentSelectedImages]);
+  };
   const selectARoomButton = () => {
     setSelectingRoom(!selectingRoom);
     setSelectingWall(false);
+    setSelectingImage(false);
   };
   const selectAWallButton = () => {
-    setSelectingRoom(false);
     setSelectingWall(!selectingWall);
+    setSelectingRoom(false);
+    setSelectingImage(false);
   };
-  useEffect (() => {
-    //console.log("selecting room", selectingRoom);
-
-  }, [selectingRoom])
+  const selectAnImageButton = () => {
+    setSelectingImage(!selectingImage);
+    setSelectingRoom(false);
+    setSelectingWall(false);
+  };
   const onCellEnter = (row, col) => {
     if (isMouseDraggingStartPos) {
       setInitPos({
@@ -337,12 +433,14 @@ const AlgoVisualizer = () => {
         toggleRoom(row, col);
       } else if (selectingWall) {
         toggleWall(row, col);
+      } else if (selectingImage) {
+        toggleAnImage(row, col);
       }
     }
   };
 
   //TODO implement a modal
-  
+
   const onCellIn = (row, col) => {
     console.log("mouse enter", row, col);
 
@@ -359,12 +457,13 @@ const AlgoVisualizer = () => {
       setIsMouseDraggingEndPos(true);
       return;
     }
-    ;
     setIsMousePressed(true);
     if (selectingRoom) {
       toggleRoom(row, col);
     } else if (selectingWall) {
       toggleWall(row, col);
+    } else if (selectingImage) {
+      toggleAnImage(row, col);
     }
   };
 
@@ -391,6 +490,9 @@ const AlgoVisualizer = () => {
     let t = haversineDistance(a, b);
     //console.log(t);
   }
+  useEffect(() => {
+    console.log("currentSelectedImages", currentSelectedImages);
+  }, [currentSelectedImages]);
 
   let rotationDegree = "180";
   return (
@@ -441,12 +543,9 @@ const AlgoVisualizer = () => {
           Instructions
         </Button>
 
-        <Button onClick={selectARoomButton}>
-          Plot a room
-        </Button>
-        <Button onClick={selectAWallButton}>
-          Plot a wall
-        </Button>
+        <Button onClick={selectARoomButton}>Plot a room</Button>
+        <Button onClick={selectAWallButton}>Plot a wall</Button>
+        <Button onClick={selectAnImageButton}>Plot an Image</Button>
         <Button
           variant="dark"
           className="solveBtn col-md-3 mx-3"
