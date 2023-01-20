@@ -352,13 +352,6 @@ const AlgoVisualizer = () => {
     setGrid(solvedGrid);
     // create nodes with row and col as well as direction from the shortPathList
     let tempNodes = [];
-    tempNodes.push({
-      key: 0,
-      row: initializedPosition.endRowIndex,
-      col: initializedPosition.endColIndex,
-      direction: null,
-      userDirection: null,
-    });
     for (let i = 0; i < shortPathList.length; i++) {
       let [row, col] = shortPathList[i];
       tempNodes.push({
@@ -366,21 +359,23 @@ const AlgoVisualizer = () => {
         row: row,
         col: col,
         direction: null,
-        userDirection: null,
+        userDirection: "",
       });
     }
-    tempNodes.push({
-      key: shortPathList.length + 1,
-      row: initializedPosition.startRowIndex,
-      col: initializedPosition.startColIndex,
-      direction: null,
-      userDirection: null,
-    });
+    // tempNodes.push({
+    //   key: shortPathList.length + 1,
+    //   row: initializedPosition.startRowIndex,
+    //   col: initializedPosition.startColIndex,
+    //   direction: null,
+    //   userDirection: "",
+    // });
     // sort the nodes based on the key smallest to biggest
     let sortedNodes = tempNodes.sort((a, b) => a.key - b.key);
     // remove the last node
     let nodes = getDirections(sortedNodes);
+    nodes = nodes.sort((a, b) => a.key - b.key);
     nodes.pop();
+    debugger;
     // for nodes
     // add a text to the html elemet to the nodes based on the direction
 
@@ -416,7 +411,7 @@ const AlgoVisualizer = () => {
         // document.querySelector(
         //   `.node-${node.row}-${node.col}`
         // ).innerHTML = `<div class="text">${node.direction}</div>`;
-        if (row > 0) {
+        if (row != node.length - 1) {
           document.querySelector(
             `.node-${node.row}-${node.col}`
           ).innerHTML = `<div class="text">${node.userDirection}</div>`;
