@@ -33,7 +33,6 @@ predefinedTextVisuals[[8, 9]] = {
   long: -119.10619,
 };
 
-
 // //console.log(baseGrid);
 
 const AlgoVisualizer = () => {
@@ -42,7 +41,8 @@ const AlgoVisualizer = () => {
   const [isMouseDraggingStartPos, setIsMouseDraggingStartPos] = useState(false);
   const [isMouseDraggingEndPos, setIsMouseDraggingEndPos] = useState(false);
   const [currentRotationDegree, setCurrentRotationDegree] = useState(0.0);
-
+  const [selectingImage, setSelectingImage] = useState(false);
+  const [currentSelectedImages, setCurrentSelectedImages] = useState([]);
   const [selectingRoom, setSelectingRoom] = useState(false);
   const [selectingWall, setSelectingWall] = useState(false);
 
@@ -61,7 +61,6 @@ const AlgoVisualizer = () => {
   const [currentMarkersVisible, setCurrentMarkersVisible] = useState([]);
 
   const [show, setShow] = useState(false);
-
 
   useEffect(() => {
     const tempGrid = grid;
@@ -105,7 +104,6 @@ const AlgoVisualizer = () => {
       `.node-${endRowIndex}-${endColIndex}`
     ).className = `eachCell node-${endRowIndex}-${endColIndex} end`;
 
-  
     setGrid([...tempGrid]);
   }, [initializedPosition]);
 
@@ -117,24 +115,40 @@ const AlgoVisualizer = () => {
   }, [grid]);
 
   // create a function to save the grid to a text file using stringified JSON
+  // const saveGrid = () => {
+  //   const gridString = JSON.stringify(grid);
+  //   const element = document.createElement("a");
+  //   const file = new Blob([gridString], { type: "text/plain" });
+  //   element.href = URL.createObjectURL(file);
+  //   element.download = "grid.txt";
+  //   document.body.appendChild(element); // Required for this to work in FireFox
+  //   element.click();
+  // };
   const saveGrid = () => {
-    const gridString = JSON.stringify(grid);
+    // create a json file with the grid and images as keys
+    const gridString = JSON.stringify({
+      grid,
+      currentSelectedImages,
+    });
     const element = document.createElement("a");
     const file = new Blob([gridString], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
-    element.download = "grid.txt";
+    element.download = "grid.json";
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
   };
 
   // create a function to load the grid from a text file using stringified JSON
-  const loadGrid = (event) => {
-    const file = event.target.files[0];
+
+  const loadGrid = () => {
+    const fileInput = document.querySelector('input[type="file"]');
     const reader = new FileReader();
-    reader.onload = function (e) {
-      const text = e.target.result;
-      const tempGrid = JSON.parse(text);
-      // loop over the tempGrid and change the color of WALL and ROOM
+    let jsonFileContent = null;
+    reader.onload = (event) => {
+      jsonFileContent = JSON.parse(event.target.result);
+      let tempGrid = jsonFileContent.grid;
+      let tempImages = jsonFileContent.currentSelectedImages;
+      // set the values of the grid, images, walls and rooms with the content of the json file
       for (let row = 0; row < tempGrid.length; row++) {
         for (let col = 0; col < tempGrid[row].length; col++) {
           if (tempGrid[row][col] == "WALL") {
@@ -146,12 +160,20 @@ const AlgoVisualizer = () => {
               `.node-${row}-${col}`
             ).className = `eachCell node-${row}-${col} room`;
           }
-        
         }
       }
+      for (let i = 0; i < tempImages.length; i++) {
+        let row = tempImages[i][0];
+        let col = tempImages[i][1];
+        document.querySelector(
+          `.node-${row}-${col}`
+        ).className = `eachCell node-${row}-${col} marker`;
+      }
       setGrid([...tempGrid]);
+      setCurrentSelectedImages([...tempImages]);
     };
-    reader.readAsText(file);
+
+    reader.readAsText(fileInput.files[0]); // read the file content as text
   };
 
   const changeColor = (row, col, type) => {
@@ -303,19 +325,44 @@ const AlgoVisualizer = () => {
       ).className = `eachCell node-${row}-${col}`;
     }
   };
+  const toggleAnImage = (row, col) => {
+    let currentCell = [row, col];
+    let tempCurrentSelectedImages = currentSelectedImages;
+    if (tempCurrentSelectedImages.includes(currentCell)) {
+      tempCurrentSelectedImages = tempCurrentSelectedImages.filter(
+        (item) => item != currentCell
+      );
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col}`;
+    } else {
+      tempCurrentSelectedImages.push(currentCell);
+      document.querySelector(
+        `.node-${row}-${col}`
+      ).className = `eachCell node-${row}-${col} marker`;
+    }
+    debugger;
+    setCurrentSelectedImages([...tempCurrentSelectedImages]);
+  };
 
   const selectARoomButton = () => {
     setSelectingRoom(!selectingRoom);
     setSelectingWall(false);
+    setSelectingImage(false);
   };
   const selectAWallButton = () => {
-    setSelectingRoom(false);
     setSelectingWall(!selectingWall);
+    setSelectingRoom(false);
+    setSelectingImage(false);
   };
-  useEffect (() => {
+  const selectAnImageButton = () => {
+    setSelectingImage(!selectingImage);
+    setSelectingRoom(false);
+    setSelectingWall(false);
+  };
+  useEffect(() => {
     //console.log("selecting room", selectingRoom);
-
-  }, [selectingRoom])
+  }, [selectingRoom]);
   const onCellEnter = (row, col) => {
     if (isMouseDraggingStartPos) {
       setInitPos({
@@ -337,12 +384,14 @@ const AlgoVisualizer = () => {
         toggleRoom(row, col);
       } else if (selectingWall) {
         toggleWall(row, col);
+      } else if (selectingImage) {
+        toggleAnImage(row, col);
       }
     }
   };
 
   //TODO implement a modal
-  
+
   const onCellIn = (row, col) => {
     console.log("mouse enter", row, col);
 
@@ -359,12 +408,13 @@ const AlgoVisualizer = () => {
       setIsMouseDraggingEndPos(true);
       return;
     }
-    ;
     setIsMousePressed(true);
     if (selectingRoom) {
       toggleRoom(row, col);
     } else if (selectingWall) {
       toggleWall(row, col);
+    } else if (selectingImage) {
+      toggleAnImage(row, col);
     }
   };
 
@@ -441,12 +491,8 @@ const AlgoVisualizer = () => {
           Instructions
         </Button>
 
-        <Button onClick={selectARoomButton}>
-          Plot a room
-        </Button>
-        <Button onClick={selectAWallButton}>
-          Plot a wall
-        </Button>
+        <Button onClick={selectARoomButton}>Plot a room</Button>
+        <Button onClick={selectAWallButton}>Plot a wall</Button>
         <Button
           variant="dark"
           className="solveBtn col-md-3 mx-3"
@@ -464,6 +510,7 @@ const AlgoVisualizer = () => {
         >
           Reset
         </Button>
+        <Button onClick={selectAnImageButton}>Plot an Image</Button>
       </div>
 
       <div
