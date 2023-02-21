@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from "react";
+import Select from "react-select";
 import "./AlgoVisualizer.css";
 import { dijkstraAlgo } from "../../algorithms/dijkstraAlgo";
 import { useHistory } from "react-router-dom";
-import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import NumericInput from "react-numeric-input";
+import { useGeolocated } from "react-geolocated";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
+import cloneDeep from "lodash/cloneDeep";
 
 const baseGrid = [];
-const rows = 30;
-const columns = 40;
+let gridRowLength = 25;
+let gridColumnLength = 50;
 const haversineDistance = require("geodetic-haversine-distance");
-for (var i = 0; i < rows; i++) {
+for (var i = 0; i < gridRowLength; i++) {
   baseGrid[i] = [];
-  for (var j = 0; j < columns; j++) {
+  for (var j = 0; j < gridColumnLength; j++) {
     baseGrid[i][j] = -1;
   }
 }
@@ -41,16 +45,162 @@ const AlgoVisualizer = () => {
   const [isMouseDraggingStartPos, setIsMouseDraggingStartPos] = useState(false);
   const [isMouseDraggingEndPos, setIsMouseDraggingEndPos] = useState(false);
   const [currentRotationDegree, setCurrentRotationDegree] = useState(0.0);
-  const [selectingImage, setSelectingImage] = useState(false);
-  const [currentSelectedImages, setCurrentSelectedImages] = useState([]);
+  const [selectingPredefinedMarker, setSelectingImage] = useState(false);
+  const [currentoptions, setCurrentOptions] = useState([]);
+  const [previousGrid, setPreviousGrid] = useState(null);
+  const [
+    currentSelectedPredefinedMarkers,
+    setCurrentSelectedPredefinedMarkers,
+  ] = useState({});
+  const [
+    currentGeolocationForPredefinedMarker,
+    setcurrentGeolocationForPredefinedMarker,
+  ] = useState({
+    latitude: "",
+    longitude: "",
+  });
+  const [isCellRoom, setIsCellRoom] = useState(false);
+  const [
+    currentSelectedPredefinedMarkersCellInformation,
+    setCurrentSelectedPredefinedMarkersCellInformation,
+  ] = useState({
+    row: -1,
+    col: -1,
+  });
+  const [currentName, setCurrentName] = useState("");
+  const [currentStartPos, setCurrentStartPos] = useState("");
+  const [currentEndPos, setCurrentEndPos] = useState("");
+  const [currentImageUrl, setCurrentImageUrl] = useState("");
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    console.log(
+      "currentSelectedPredefinedMarkers",
+      currentSelectedPredefinedMarkers
+    );
+  }, [currentSelectedPredefinedMarkers]);
+  const handleClose = () => {
+    if (currentSelectedPredefinedMarkersCellInformation.row == -1) {
+      setShow(false);
+      return;
+    }
+
+    if (
+      currentGeolocationForPredefinedMarker.latitude == "" ||
+      currentGeolocationForPredefinedMarker.longitude == ""
+    ) {
+      setShow(false);
+      return;
+    }
+    let currentPredefinedInformation = {
+      row: currentSelectedPredefinedMarkersCellInformation.row,
+      col: currentSelectedPredefinedMarkersCellInformation.col,
+      latitude:
+        currentGeolocationForPredefinedMarker.latitude != ""
+          ? currentGeolocationForPredefinedMarker.latitude
+          : 0,
+      longitude:
+        currentGeolocationForPredefinedMarker.longitude != ""
+          ? currentGeolocationForPredefinedMarker.longitude
+          : 0,
+      image_url: currentImageUrl != "" ? currentImageUrl : "",
+      is_target_location: isCellRoom,
+      name: currentName != "" ? currentName : "",
+    };
+    // get the currentSelectedPredefinedMarkers and remove the current cell and replace it with the new one
+    let temp = currentSelectedPredefinedMarkers;
+    // delete the temp at row and col
+    delete temp[
+      [
+        currentSelectedPredefinedMarkersCellInformation.row,
+        currentSelectedPredefinedMarkersCellInformation.col,
+      ]
+    ];
+    temp[
+      [
+        currentSelectedPredefinedMarkersCellInformation.row,
+        currentSelectedPredefinedMarkersCellInformation.col,
+      ]
+    ] = currentPredefinedInformation;
+    setCurrentSelectedPredefinedMarkers(temp);
+
+    setCurrentSelectedPredefinedMarkersCellInformation({
+      row: -1,
+      col: -1,
+    });
+    setcurrentGeolocationForPredefinedMarker({
+      latitude: "",
+      longitude: "",
+    });
+    setCurrentImageUrl("");
+    setIsCellRoom(false);
+    setShow(false);
+    setCurrentName("");
+  };
+
+  const handleShow = (row, col) => {
+    // use a filter to find a value in the currentSelectedPredefinedMarkers with row and col
+    if (currentSelectedPredefinedMarkers[[row, col]] != undefined) {
+      if (
+        currentSelectedPredefinedMarkers[[row, col]].latitude != "" ||
+        currentSelectedPredefinedMarkers[[row, col]].latitude != 0
+      ) {
+        setcurrentGeolocationForPredefinedMarker({
+          latitude: currentSelectedPredefinedMarkers[[row, col]].latitude,
+          longitude: currentSelectedPredefinedMarkers[[row, col]].longitude,
+        });
+        let temp = currentSelectedPredefinedMarkers[[row, col]];
+        setIsCellRoom(temp.is_target_location);
+        setCurrentImageUrl(
+          currentSelectedPredefinedMarkers[[row, col]].image_url
+        );
+        setCurrentName(currentSelectedPredefinedMarkers[[row, col]].name);
+      }
+    }
+    setShow(true);
+  };
+  useEffect(() => {
+    console.log(
+      "currentSelectedPredefinedMarkers",
+      currentSelectedPredefinedMarkers
+    );
+  }, [currentSelectedPredefinedMarkers]);
+
   const [selectingRoom, setSelectingRoom] = useState(false);
   const [selectingWall, setSelectingWall] = useState(false);
+  const [plottingGeolocation, setPlottingGeolocation] = useState(false);
+
+  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+    useGeolocated({
+      positionOptions: {
+        enableHighAccuracy: false,
+      },
+      userDecisionTimeout: 5000,
+    });
+
+  function getCurrentGeoLocation() {
+    if (coords) {
+      return {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+      };
+    }
+    console.log("Geolocation is not available");
+  }
+
+  function buttonFunctionToGetCurrentLocation() {
+    const currentGeoLocationtemp = getCurrentGeoLocation();
+    setcurrentGeolocationForPredefinedMarker({
+      latitude: currentGeoLocationtemp.latitude,
+      longitude: currentGeoLocationtemp.longitude,
+    });
+  }
 
   const [initializedPosition, setInitPos] = useState({
-    startRowIndex: 4,
-    startColIndex: 7,
-    endRowIndex: 4,
-    endColIndex: 15,
+    startRowIndex: gridRowLength - 1,
+    startColIndex: gridColumnLength - 1,
+    endRowIndex: gridRowLength - 1,
+    endColIndex: gridColumnLength - 1,
   });
   const [previous, setPrevious] = useState(null);
   const [sortedMarkers, setSortedMarkers] = useState([]);
@@ -60,7 +210,7 @@ const AlgoVisualizer = () => {
   });
   const [currentMarkersVisible, setCurrentMarkersVisible] = useState([]);
 
-  const [show, setShow] = useState(false);
+  // const [show, setShow] = useState(false);
 
   useEffect(() => {
     const tempGrid = grid;
@@ -83,7 +233,7 @@ const AlgoVisualizer = () => {
 
     tempGrid[prevStartRowIndex][prevStartColIndex] = -1;
     tempGrid[prevEndRowIndex][prevEndColIndex] = -1;
-
+    debugger;
     tempGrid[initializedPosition.startRowIndex][
       initializedPosition.startColIndex
     ] = 0;
@@ -116,9 +266,33 @@ const AlgoVisualizer = () => {
 
   const saveGrid = () => {
     // create a json file with the grid and images as keys
+    let target_locations = [];
+    let markers = [];
+    // filter out currentSelectedPredefinedMarkers if the is_target_location is true
+    for (let key in currentSelectedPredefinedMarkers) {
+      if (currentSelectedPredefinedMarkers[key].is_target_location) {
+        target_locations.push(currentSelectedPredefinedMarkers[key]);
+      } else {
+        markers.push(currentSelectedPredefinedMarkers[key]);
+      }
+    }
+    let walls = [];
+    // for row col in grid
+    for (let row = 0; row < grid.length; row++) {
+      for (let col = 0; col < grid[row].length; col++) {
+        // if grid[row][col] == 1
+        if (grid[row][col] == "WALL") {
+          // add to walls
+          walls.push({ row, col });
+        }
+      }
+    }
     const gridString = JSON.stringify({
-      grid,
-      currentSelectedImages,
+      gridRowLength,
+      gridColumnLength,
+      target_locations,
+      markers,
+      walls,
     });
     const element = document.createElement("a");
     const file = new Blob([gridString], { type: "text/plain" });
@@ -136,31 +310,63 @@ const AlgoVisualizer = () => {
     let jsonFileContent = null;
     reader.onload = (event) => {
       jsonFileContent = JSON.parse(event.target.result);
-      let tempGrid = jsonFileContent.grid;
-      let tempImages = jsonFileContent.currentSelectedImages;
-      // set the values of the grid, images, walls and rooms with the content of the json file
-      for (let row = 0; row < tempGrid.length; row++) {
-        for (let col = 0; col < tempGrid[row].length; col++) {
-          if (tempGrid[row][col] == "WALL") {
-            document.querySelector(
-              `.node-${row}-${col}`
-            ).className = `eachCell node-${row}-${col} wall`;
-          } else if (tempGrid[row][col] == "ROOM") {
-            document.querySelector(
-              `.node-${row}-${col}`
-            ).className = `eachCell node-${row}-${col} room`;
-          }
+      // let tempGrid = jsonFileContent.grid;
+      let markers = jsonFileContent.markers;
+      let target_locations = jsonFileContent.target_locations;
+      let walls = jsonFileContent.walls;
+      let currentGridRowLength = jsonFileContent.gridRowLength;
+      let currentGridColumnLength = jsonFileContent.gridColumnLength;
+      gridRowLength = currentGridRowLength;
+      gridColumnLength = currentGridColumnLength;
+      // set the values of the grid, images, walls and target_locations with the content of the json file
+      let tempGrid = [];
+      // create a matrix with -1's with gridRowLength and cols
+      for (let row = 0; row < currentGridRowLength; row++) {
+        tempGrid.push([]);
+        for (let col = 0; col < currentGridColumnLength; col++) {
+          tempGrid[row].push(-1);
         }
       }
-      for (let i = 0; i < tempImages.length; i++) {
-        let row = tempImages[i][0];
-        let col = tempImages[i][1];
+      debugger;
+      for (let i = 0; i < walls.length; i++) {
+        let row = walls[i].row;
+        let col = walls[i].col;
+        console.log(row, col);
+        tempGrid[row][col] = "WALL";
+        document.querySelector(
+          `.node-${row}-${col}`
+        ).className = `eachCell node-${row}-${col} wall`;
+      }
+      for (let i = 0; i < target_locations.length; i++) {
+        let row = target_locations[i].row;
+        let col = target_locations[i].col;
+        // tempGrid[row][col] = "ROOM";
+        document.querySelector(
+          `.node-${row}-${col}`
+        ).className = `eachCell node-${row}-${col} room`;
+      }
+      for (let i = 0; i < markers.length; i++) {
+        let row = markers[i].row;
+        let col = markers[i].col;
         document.querySelector(
           `.node-${row}-${col}`
         ).className = `eachCell node-${row}-${col} marker`;
       }
+      let merge = [];
+      let tempcurrentselectedpredefinedmarkers = {};
+      merge = [...target_locations, ...markers];
+      for (let i = 0; i < merge.length; i++) {
+        tempcurrentselectedpredefinedmarkers[[merge[i].row, merge[i].col]] =
+          merge[i];
+      }
+
       setGrid([...tempGrid]);
-      setCurrentSelectedImages([...tempImages]);
+      // setCurrentSelectedPredefinedMarkers(
+      //   ...tempcurrentselectedpredefinedmarkers
+      // );
+      setCurrentSelectedPredefinedMarkers({
+        ...tempcurrentselectedpredefinedmarkers,
+      });
     };
 
     reader.readAsText(fileInput.files[0]); // read the file content as text
@@ -344,7 +550,31 @@ const AlgoVisualizer = () => {
     }
     return tempNodes;
   }
+  useEffect(() => {
+    //console.log("currentoptions", currentoptions);
+    // use the values of currentSelectedPredefinedMarkers to set the currentoptions
+    let temp = [];
+    for (var key in currentSelectedPredefinedMarkers) {
+      temp.push({
+        value: key,
+        label: currentSelectedPredefinedMarkers[key].name + " " + key,
+      });
+    }
+    setCurrentOptions([...temp]);
+  }, [currentSelectedPredefinedMarkers]);
+
+  useEffect(() => {
+    console.log("currentoptions", currentoptions);
+  }, [currentoptions]);
+  useEffect(() => {
+    console.log(initializedPosition);
+  }, [initializedPosition]);
+
   const solveTheGrid = () => {
+    // make a deep copy of the grid
+    let deep_clone_grid = cloneDeep(grid);
+    setPreviousGrid(deep_clone_grid);
+
     const [shortPathList, listOfAllNodes, solvedGrid] = dijkstraAlgo(
       grid,
       initializedPosition
@@ -362,68 +592,80 @@ const AlgoVisualizer = () => {
         userDirection: "",
       });
     }
-    // tempNodes.push({
-    //   key: shortPathList.length + 1,
-    //   row: initializedPosition.startRowIndex,
-    //   col: initializedPosition.startColIndex,
-    //   direction: null,
-    //   userDirection: "",
-    // });
-    // sort the nodes based on the key smallest to biggest
+
     let sortedNodes = tempNodes.sort((a, b) => a.key - b.key);
     // remove the last node
     let nodes = getDirections(sortedNodes);
     nodes = nodes.sort((a, b) => a.key - b.key);
-    nodes.pop();
-    debugger;
-    // for nodes
-    // add a text to the html elemet to the nodes based on the direction
-
+    let last_node = nodes[nodes.length - 1];
+    // check the last node and set the direction using the start node
+    if (last_node.direction == "right") {
+      if (last_node.col < initializedPosition.col) {
+        last_node.userDirection = "left";
+      } else {
+        last_node.userDirection = "right";
+      }
+    } else if (last_node.direction == "left") {
+      if (last_node.col < initializedPosition.col) {
+        last_node.userDirection = "left";
+      } else {
+        last_node.userDirection = "right";
+      }
+    } else if (last_node.direction == "up") {
+      if (last_node.row < initializedPosition.row) {
+        last_node.userDirection = "left";
+      }
+      if (last_node.row > initializedPosition.row) {
+        last_node.userDirection = "right";
+      }
+    } else if (last_node.direction == "down") {
+      if (last_node.row < initializedPosition.row) {
+        last_node.userDirection = "right";
+      }
+      if (last_node.row > initializedPosition.row) {
+        last_node.userDirection = "left";
+      }
+    }
     for (let row = 0; row < listOfAllNodes.length; row++) {
       setTimeout(() => {
         const node = listOfAllNodes[row];
         changeColor(node[0], node[1], "visual");
       }, 1 * row);
     }
-    // for each node in nodes change the color using path and add a text to the cell using the direction
 
-    // let tempDistancesWithKeys = [];
-    // // Fill path color
-    // for (let row = 0; row < nodes.length; row++) {
-    //   setTimeout(() => {
-    //     const node = shortPathList[row];
-    //     if ([node[0], node[1]] in predefinedTextVisuals) {
-    //       changeColor(node[0], node[1], "marker");
-    //       // add a text to the cell
+    // filter currentSelectedPredefinedMarkers with is_target_location false
+    let temp = {};
+    for (var key in currentSelectedPredefinedMarkers) {
+      if (currentSelectedPredefinedMarkers[key].is_target_location == false) {
+        temp[key] = currentSelectedPredefinedMarkers[key];
+      }
+    }
 
-    //       tempDistancesWithKeys.push([node[0], node[1]]);
-    //     } else {
-    //       changeColor(node[0], node[1], "path");
-    //     }
-    //   }, 1 * (row + listOfAllNodes.length));
-    // }
     for (let row = 0; row < nodes.length; row++) {
       setTimeout(() => {
         const node = nodes[row];
 
         changeColor(node.row, node.col, "path");
-        // add a text to the cell
-        // document.querySelector(
-        //   `.node-${node.row}-${node.col}`
-        // ).innerHTML = `<div class="text">${node.direction}</div>`;
+
         if (row != node.length - 1) {
+          if (temp[[node.row, node.col]] != undefined) {
+            if (node.userDirection == "") {
+              node.userDirection = "keep straight";
+            }
+            document.querySelector(
+              `.node-${node.row}-${node.col}`
+            ).innerHTML = `<div class="text">${node.userDirection}</div>`;
+          }
+
           document.querySelector(
             `.node-${node.row}-${node.col}`
           ).innerHTML = `<div class="text">${node.userDirection}</div>`;
         }
       }, 1 * (row + listOfAllNodes.length));
     }
-    // setCurrentMarkersVisible(tempDistancesWithKeys);
   };
 
   const toggleWall = (row, col) => {
-    // if the current location is not a wall then convert it to a wall by changing the color to black and value to "WALL"
-    //console.log(row, col);
     if (grid[row][col] != "WALL") {
       const tempGrid = grid;
       tempGrid[row][col] = "WALL";
@@ -431,8 +673,6 @@ const AlgoVisualizer = () => {
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col} wall`;
-      // add a text to the cell
-      //
     } else {
       const tempGrid = grid;
       tempGrid[row][col] = -1;
@@ -444,8 +684,6 @@ const AlgoVisualizer = () => {
   };
 
   const toggleRoom = (row, col) => {
-    // if the current location is not a room then convert it to a room by changing the color to blue and value to "ROOM"
-    //console.log(row, col);
     if (grid[row][col] != "ROOM") {
       const tempGrid = grid;
       tempGrid[row][col] = "ROOM";
@@ -462,25 +700,35 @@ const AlgoVisualizer = () => {
       ).className = `eachCell node-${row}-${col}`;
     }
   };
-  const toggleAnImage = (row, col) => {
-    let currentCell = [row, col];
-    let tempCurrentSelectedImages = currentSelectedImages;
-    if (tempCurrentSelectedImages.includes(currentCell)) {
-      tempCurrentSelectedImages = tempCurrentSelectedImages.filter(
-        (item) => item != currentCell
-      );
+  const togglePredefinedMarker = (row, col) => {
+    if (
+      currentSelectedPredefinedMarkers[[row, col]] &&
+      window.confirm("Are you sure you want to delete this marker?")
+    ) {
+      const temp = currentSelectedPredefinedMarkers;
+      delete temp[[row, col]];
+      setCurrentSelectedPredefinedMarkers({ ...temp });
       document.querySelector(
         `.node-${row}-${col}`
       ).className = `eachCell node-${row}-${col}`;
-    } else {
-      tempCurrentSelectedImages.push(currentCell);
-      document.querySelector(
-        `.node-${row}-${col}`
-      ).className = `eachCell node-${row}-${col} marker`;
+
+      return;
     }
-    debugger;
-    setCurrentSelectedImages([...tempCurrentSelectedImages]);
+
+    // create a modal
+    setCurrentSelectedPredefinedMarkersCellInformation({ row: row, col: col });
+    handleShow(row, col);
+    document.querySelector(
+      `.node-${row}-${col}`
+    ).className = `eachCell node-${row}-${col} marker`;
   };
+
+  useEffect(() => {
+    console.log(
+      "currentSelectedPredefinedMarkers",
+      currentSelectedPredefinedMarkers
+    );
+  }, [currentSelectedPredefinedMarkers]);
 
   const selectARoomButton = () => {
     setSelectingRoom(!selectingRoom);
@@ -492,14 +740,22 @@ const AlgoVisualizer = () => {
     setSelectingRoom(false);
     setSelectingImage(false);
   };
-  const selectAnImageButton = () => {
-    setSelectingImage(!selectingImage);
+  const selectAPredefinedMarker = () => {
+    setSelectingImage(!selectingPredefinedMarker);
     setSelectingRoom(false);
     setSelectingWall(false);
   };
-  useEffect(() => {
-    //console.log("selecting room", selectingRoom);
-  }, [selectingRoom]);
+  const plottingGeolocationButton = () => {
+    setPlottingGeolocation(!plottingGeolocation);
+    setSelectingRoom(false);
+    setSelectingWall(false);
+    setSelectingImage(false);
+  };
+  // useEffect(()=>{
+  //   console.log("selectingPredefinedMarker",selectingPredefinedMarker)
+
+  // },[selectingPredefinedMarker])
+  useEffect(() => {}, [selectingRoom]);
   const onCellEnter = (row, col) => {
     if (isMouseDraggingStartPos) {
       setInitPos({
@@ -521,8 +777,6 @@ const AlgoVisualizer = () => {
         toggleRoom(row, col);
       } else if (selectingWall) {
         toggleWall(row, col);
-      } else if (selectingImage) {
-        toggleAnImage(row, col);
       }
     }
   };
@@ -550,8 +804,8 @@ const AlgoVisualizer = () => {
       toggleRoom(row, col);
     } else if (selectingWall) {
       toggleWall(row, col);
-    } else if (selectingImage) {
-      toggleAnImage(row, col);
+    } else if (selectingPredefinedMarker) {
+      togglePredefinedMarker(row, col);
     }
   };
 
@@ -568,8 +822,38 @@ const AlgoVisualizer = () => {
   };
 
   const handleClear = () => {
-    // history.push("/hello");
-    window.location.reload();
+    for (let row = 0; row < previousGrid.length; row++) {
+      for (let col = 0; col < previousGrid[0].length; col++) {
+        if (previousGrid[row][col] == "WALL") {
+          document.querySelector(
+            `.node-${row}-${col}`
+          ).className = `eachCell node-${row}-${col} wall`;
+        } else {
+          document.querySelector(
+            `.node-${row}-${col}`
+          ).className = `eachCell node-${row}-${col}`;
+        }
+        document.querySelector(`.node-${row}-${col}`).innerHTML = ``;
+      }
+    }
+    // for currentSelectedPredefinedMarkers
+    for (let key in currentSelectedPredefinedMarkers) {
+      let [row, col] = key.split(",");
+
+      if (currentSelectedPredefinedMarkers[key].is_target_location == true) {
+        document.querySelector(
+          `.node-${row}-${col}`
+        ).className = `eachCell node-${row}-${col} room`;
+      } else if (
+        currentSelectedPredefinedMarkers[key].is_target_location == false
+      ) {
+        document.querySelector(
+          `.node-${row}-${col}`
+        ).className = `eachCell node-${row}-${col} marker`;
+      }
+    }
+
+    setGrid(previousGrid);
   };
 
   function test() {
@@ -579,103 +863,220 @@ const AlgoVisualizer = () => {
     //console.log(t);
   }
 
+  useEffect(() => {
+    console.log("isCellRoom", isCellRoom);
+    console.log("currentImageUrl", currentImageUrl);
+  }, [isCellRoom, currentImageUrl]);
+
   let rotationDegree = "180";
   return (
-    <div className="container text-center">
-      <NumericInput
-        onChange={(e) =>
-          setCurrentGeoLocation({
-            latitude: e,
-            longitude: currentGeoLocation.longitude,
-          })
-        }
-        step={0.000001}
-        precision={6}
-        value={currentGeoLocation["latitude"]}
-      />
-      <NumericInput
-        onChange={(e) =>
-          setCurrentGeoLocation({
-            latitude: currentGeoLocation.latitude,
-            longitude: e,
-          })
-        }
-        step={0.000001}
-        precision={6}
-        value={currentGeoLocation["longitude"]}
-      />
-
-      <div className="row middle2 containerborder">
-        <Button
-          variant="dark"
-          className="solveBtn col-md-3 mx-3"
-          onClick={solveTheGrid}
-        >
-          Find Path
-        </Button>
-        <Button
-          variant="dark"
-          className="solveBtn col-md-3 mx-3"
-          onClick={test}
-        >
-          test
-        </Button>
-        <Button
-          variant="dark"
-          className="solveBtn col-md-3 mx-3"
-          onClick={handleInstructions}
-        >
-          Instructions
-        </Button>
-
-        <Button onClick={selectARoomButton}>Plot a room</Button>
-        <Button onClick={selectAWallButton}>Plot a wall</Button>
-        <Button
-          variant="dark"
-          className="solveBtn col-md-3 mx-3"
-          onClick={saveGrid}
-        >
-          Save Grid
-        </Button>
-        {/* make a button to use the loadGrid function */}
-        <input type="file" onChange={loadGrid} />
-
-        <Button
-          variant="dark"
-          className="solveBtn col-md-3 mx-3"
-          onClick={handleClear}
-        >
-          Reset
-        </Button>
-        <Button onClick={selectAnImageButton}>Plot an Image</Button>
-      </div>
-
-      <div
-        className="gridContainer"
-        style={{
-          transform: "rotate(" + currentRotationDegree + "deg)",
-        }}
+    <>
+      {" "}
+      <Modal
+        show={show}
+        onHide={handleClose}
+        backdrop="static"
+        keyboard={false}
       >
-        <div className="grid">
-          {grid.map((row, rowIndex) => {
-            return row.map((cell, colIndex) => {
-              return (
-                <div
-                  onMouseDown={() => {
-                    onCellIn(rowIndex, colIndex);
-                  }}
-                  onMouseUp={onCellOut}
-                  onMouseEnter={() => {
-                    onCellEnter(rowIndex, colIndex);
-                  }}
-                  className={`eachCell node-${rowIndex}-${colIndex}`}
-                ></div>
-              );
-            });
-          })}
+        <Modal.Header closeButton>
+          <Modal.Title>add Geolocation or image</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {/* button to use the get current geolocation */}
+          <Button onClick={buttonFunctionToGetCurrentLocation}>
+            Plot to cell current Geolocation
+          </Button>
+          <div>
+            current geolocation:{" "}
+            {currentGeolocationForPredefinedMarker.latitude}, ,{" "}
+            {currentGeolocationForPredefinedMarker.longitude}
+          </div>
+          {/* input from modal with button called save
+           */}
+          <Form>
+            <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
+              <Form.Label>image url</Form.Label>
+              <Form.Control
+                onChange={(e) => setCurrentImageUrl(e.target.value)}
+                placeholder={currentImageUrl}
+                autoFocus
+              />
+            </Form.Group>
+          </Form>
+          <Form>
+            {["checkbox"].map((type) => (
+              <div key={`default-${type}`} className="mb-3">
+                <Form.Check
+                  checked={isCellRoom}
+                  onChange={(e) => setIsCellRoom(e.target.checked)}
+                  type={type}
+                  id={`default-${type}`}
+                  label={`is target location`}
+                />
+              </div>
+            ))}
+          </Form>{" "}
+          {isCellRoom ? (
+            <Form>
+              <Form.Group
+                className="mb-3"
+                controlId="exampleForm.ControlInput1"
+              >
+                <Form.Label>name</Form.Label>
+                <Form.Control
+                  onChange={(e) => setCurrentName(e.target.value)}
+                  placeholder={currentName}
+                  autoFocus
+                />
+              </Form.Group>
+            </Form>
+          ) : null}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary">Understood</Button>
+        </Modal.Footer>
+      </Modal>
+      <div className="container text-center">
+        <NumericInput
+          onChange={(e) =>
+            setCurrentGeoLocation({
+              latitude: e,
+              longitude: currentGeoLocation.longitude,
+            })
+          }
+          step={0.000001}
+          precision={6}
+          value={currentGeoLocation["latitude"]}
+        />
+        <NumericInput
+          onChange={(e) =>
+            setCurrentGeoLocation({
+              latitude: currentGeoLocation.latitude,
+              longitude: e,
+            })
+          }
+          step={0.000001}
+          precision={6}
+          value={currentGeoLocation["longitude"]}
+        />
+
+        <div className="row middle2 containerborder">
+          <Button
+            variant="dark"
+            className="solveBtn col-md-3 mx-3"
+            onClick={solveTheGrid}
+          >
+            Find Path
+          </Button>
+          <Button
+            variant="dark"
+            className="solveBtn col-md-3 mx-3"
+            onClick={test}
+          >
+            test
+          </Button>
+          <Button
+            variant="dark"
+            className="solveBtn col-md-3 mx-3"
+            onClick={handleInstructions}
+          >
+            Instructions
+          </Button>
+
+          {/* <Button onClick={selectARoomButton}>Plot a room</Button> */}
+          <Button onClick={selectAWallButton}>Plot a wall</Button>
+          <Button
+            variant="dark"
+            className="solveBtn col-md-3 mx-3"
+            onClick={saveGrid}
+          >
+            Save Grid
+          </Button>
+          {/* make a button to use the loadGrid function */}
+          <input type="file" onChange={loadGrid} />
+
+          <Button
+            variant="dark"
+            className="solveBtn col-md-3 mx-3"
+            onClick={handleClear}
+          >
+            Reset
+          </Button>
+          <Button onClick={selectAPredefinedMarker}>
+            Plot an Predefined Marker
+          </Button>
+          <div>select start location: {currentStartPos} </div>
+          <Select
+            style={{ width: "100px", color: "black" }}
+            placeholder="select start location"
+            options={currentoptions}
+            onChange={(e) => {
+              console.log(e);
+              // split the e.value using , to get the current row and col
+              let row = parseInt(e.value.split(",")[0]);
+              let col = parseInt(e.value.split(",")[1]);
+              setCurrentStartPos(e.label);
+              setInitPos({
+                startRowIndex: initializedPosition.startRowIndex,
+                startColIndex: initializedPosition.startColIndex,
+                endRowIndex: row,
+                endColIndex: col,
+              });
+            }}
+          />
+          <div>select destination location: {currentEndPos} </div>
+
+          <Select
+            style={{ width: "100px", color: "black" }}
+            placeholder="select start location"
+            options={currentoptions}
+            value={currentEndPos}
+            onChange={(e) => {
+              console.log(e);
+              // split the e.value using , to get the current row and col
+              let row = parseInt(e.value.split(",")[0]);
+              let col = parseInt(e.value.split(",")[1]);
+              setCurrentEndPos(e.label);
+              setInitPos({
+                startRowIndex: row,
+                startColIndex: col,
+                endRowIndex: initializedPosition.endRowIndex,
+                endColIndex: initializedPosition.endColIndex,
+              });
+            }}
+          />
+        </div>
+
+        <div
+          className="gridContainer"
+          style={{
+            transform: "rotate(" + currentRotationDegree + "deg)",
+          }}
+        >
+          <div className="grid">
+            {grid.map((row, rowIndex) => {
+              return row.map((cell, colIndex) => {
+                return (
+                  <div
+                    onMouseDown={() => {
+                      onCellIn(rowIndex, colIndex);
+                    }}
+                    onMouseUp={onCellOut}
+                    onMouseEnter={() => {
+                      onCellEnter(rowIndex, colIndex);
+                    }}
+                    className={`eachCell node-${rowIndex}-${colIndex}`}
+                  ></div>
+                );
+              });
+            })}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
