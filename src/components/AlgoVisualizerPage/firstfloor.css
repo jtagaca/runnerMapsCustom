@@ -1,0 +1,128 @@
+.algoPage {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  justify-content: space-evenly;
+}
+.room {
+  background-color: #ae00ff !important;
+}
+.solveBtnContainer {
+  padding: 20px;
+}
+
+.rotate {
+  transform: rotate(90deg) !important;
+}
+
+.zoom {
+  zoom: 150%;
+}
+.zoomIn {
+  animation: zoomIn 0.5s;
+}
+
+@keyframes zoomIn {
+  0% {
+    transform: scale(0.3);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+/* create a zoom in animation and make the selected cell in the middle */
+
+.gridContainer {
+  background-color: azure;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.marker {
+  background-color: #66d4ff !important;
+}
+.selectedMarker {
+  background-color: #ff0000 !important;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(52, 1fr);
+  transition: all 1s ease;
+  margin-top: 20px;
+}
+
+.eachCell {
+  background-color: #ffffff;
+  height: 40px;
+  width: 40px;
+  border: black 0.2px solid;
+  display: flex;
+}
+
+.containerborder {
+  background-color: #2ecc71;
+  border-radius: 40px;
+  padding: 30px;
+  /* box-shadow: rgb(38, 57, 77) 0px 20px 30px -10px; */
+}
+
+.visualCell {
+  background-color: #3498db;
+  /* background-color: rgb(248, 248, 248); */
+  animation: animation 0.5s;
+}
+
+.pathCell {
+  background-color: burlywood;
+}
+
+.start {
+  background-color: #2ecc71;
+}
+
+.end {
+  background-color: #e74c3c;
+}
+
+.wall {
+  background-color: black;
+}
+
+@keyframes animation {
+  0.0% {
+    background-color: #2980b9;
+    transform: scale(0.3);
+  }
+  100% {
+    background-color: #3498db;
+    transform: scale(1);
+  }
+}
+
+.solveBtn {
+  border: none;
+  outline: none;
+  /* margin-bottom: 20px; */
+  /* padding: 10px 20px; */
+  background-color: #3498db;
+  border-radius: 60px;
+  color: white;
+  border-bottom: #2980b9 5px solid;
+  font-size: 25px;
+  /* border-radius: 2px; */
+}
+
+.solveBtn:active {
+  border-bottom: #2980b9 2px solid;
+}
+
+.credits {
+  color: rgb(173, 173, 173);
+}
+
+.middle2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
