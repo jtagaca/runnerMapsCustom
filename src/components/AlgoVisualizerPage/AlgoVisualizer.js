@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import "./AlgoVisualizer.css";
 import { dijkstraAlgo } from "../../algorithms/dijkstraAlgo";
 import { useHistory } from "react-router-dom";
 import Button from "react-bootstrap/Button";
@@ -9,12 +8,14 @@ import { useGeolocated } from "react-geolocated";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import cloneDeep from "lodash/cloneDeep";
+import "./AlgoVisualizer.css";
 
 const baseGrid = [];
 let gridRowLength = 25;
 let gridColumnLength = 50;
 const haversineDistance = require("geodetic-haversine-distance");
 for (var i = 0; i < gridRowLength; i++) {
+  debugger;
   baseGrid[i] = [];
   for (var j = 0; j < gridColumnLength; j++) {
     baseGrid[i][j] = -1;
@@ -409,6 +410,10 @@ const AlgoVisualizer = () => {
       "'Green Grid' -> starting point \n'Red Grid'-> endpoint \n  1️⃣ Drag the green or red grid to your desired location on the grid. \n  2️⃣ Click and drag your mouse to the empty cells to mark them as a wall.\n  3️⃣ Click the 'Find Path' button. ✨  "
     );
   };
+
+  useEffect(() => {
+    console.log(grid);
+  }, [grid]);
 
   function getClosestMarkers() {
     let closestMarkers = [];

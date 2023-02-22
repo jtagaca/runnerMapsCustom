@@ -14,6 +14,9 @@ function App() {
         <Route path="/firstfloor">
           <FirstFloor />
         </Route>
+        <Route exact path="/secondfloor">
+          <AlgoVisualizer />
+        </Route>
       </Switch>
     </Router>
   );
