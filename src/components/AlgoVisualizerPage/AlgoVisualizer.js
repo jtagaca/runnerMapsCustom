@@ -15,7 +15,6 @@ let gridRowLength = 25;
 let gridColumnLength = 50;
 const haversineDistance = require("geodetic-haversine-distance");
 for (var i = 0; i < gridRowLength; i++) {
-  debugger;
   baseGrid[i] = [];
   for (var j = 0; j < gridColumnLength; j++) {
     baseGrid[i][j] = -1;
@@ -174,7 +173,7 @@ const AlgoVisualizer = () => {
   const { coords, isGeolocationAvailable, isGeolocationEnabled } =
     useGeolocated({
       positionOptions: {
-        enableHighAccuracy: false,
+        enableHighAccuracy: true,
       },
       userDecisionTimeout: 5000,
     });
@@ -234,7 +233,6 @@ const AlgoVisualizer = () => {
 
     tempGrid[prevStartRowIndex][prevStartColIndex] = -1;
     tempGrid[prevEndRowIndex][prevEndColIndex] = -1;
-    debugger;
     tempGrid[initializedPosition.startRowIndex][
       initializedPosition.startColIndex
     ] = 0;
@@ -304,7 +302,24 @@ const AlgoVisualizer = () => {
   };
 
   // create a function to load the grid from a text file using stringified JSON
+  useEffect(() => {
+    debugger;
+    if (navigator.geolocation) {
+      console.log(
+        "current geolocation" +
+          navigator.geolocation.getCurrentPosition(showPosition)
+      );
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
+  function showPosition(position) {
+    debugger;
+    const lat = position.coords.latitude.toFixed(9);
+    const long = position.coords.longitude.toFixed(9);
+    console.log(`Latitude: ${lat}, Longitude: ${long}`);
+  }
   const loadGrid = () => {
     const fileInput = document.querySelector('input[type="file"]');
     const reader = new FileReader();
@@ -328,7 +343,7 @@ const AlgoVisualizer = () => {
           tempGrid[row].push(-1);
         }
       }
-      debugger;
+
       for (let i = 0; i < walls.length; i++) {
         let row = walls[i].row;
         let col = walls[i].col;
