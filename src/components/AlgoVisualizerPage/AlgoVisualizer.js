@@ -189,10 +189,9 @@ const AlgoVisualizer = () => {
   }
 
   function buttonFunctionToGetCurrentLocation() {
-    const currentGeoLocationtemp = getCurrentGeoLocation();
     setcurrentGeolocationForPredefinedMarker({
-      latitude: currentGeoLocationtemp.latitude,
-      longitude: currentGeoLocationtemp.longitude,
+      latitude: currentGeoLocation.latitude,
+      longitude: currentGeoLocation.longitude,
     });
   }
 
