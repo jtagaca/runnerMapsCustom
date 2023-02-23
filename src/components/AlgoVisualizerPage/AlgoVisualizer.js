@@ -213,6 +213,16 @@ const AlgoVisualizer = () => {
   // const [show, setShow] = useState(false);
 
   useEffect(() => {
+    let temp = getCurrentGeoLocation();
+    if (temp != null) {
+      setCurrentGeoLocation({
+        latitude: temp.latitude,
+        longitude: temp.longitude,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     const tempGrid = grid;
     let prevStartRowIndex = 0,
       prevStartColIndex = 0;
@@ -892,6 +902,9 @@ const AlgoVisualizer = () => {
   return (
     <>
       {" "}
+      current geolocation: latitude: {
+        currentGeoLocation.latitude
+      } longitude: {currentGeoLocation.longitude}
       <Modal
         show={show}
         onHide={handleClose}
