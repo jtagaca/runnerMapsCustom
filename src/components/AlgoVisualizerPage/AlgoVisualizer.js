@@ -170,7 +170,7 @@ const AlgoVisualizer = () => {
   const [selectingWall, setSelectingWall] = useState(false);
   const [plottingGeolocation, setPlottingGeolocation] = useState(false);
 
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
+  const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
       positionOptions: {
         enableHighAccuracy: true,
@@ -189,6 +189,7 @@ const AlgoVisualizer = () => {
   }
 
   function buttonFunctionToGetCurrentLocation() {
+    console.log("current location" + getPosition());
     setcurrentGeolocationForPredefinedMarker({
       latitude: currentGeoLocation.latitude,
       longitude: currentGeoLocation.longitude,
