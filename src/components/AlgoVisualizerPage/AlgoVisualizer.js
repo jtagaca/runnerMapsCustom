@@ -213,16 +213,6 @@ const AlgoVisualizer = () => {
   // const [show, setShow] = useState(false);
 
   useEffect(() => {
-    let temp = getCurrentGeoLocation();
-    if (temp != null) {
-      setCurrentGeoLocation({
-        latitude: temp.latitude,
-        longitude: temp.longitude,
-      });
-    }
-  }, []);
-
-  useEffect(() => {
     const tempGrid = grid;
     let prevStartRowIndex = 0,
       prevStartColIndex = 0;
@@ -313,7 +303,6 @@ const AlgoVisualizer = () => {
 
   // create a function to load the grid from a text file using stringified JSON
   useEffect(() => {
-    debugger;
     if (navigator.geolocation) {
       console.log(
         "current geolocation" +
@@ -325,9 +314,12 @@ const AlgoVisualizer = () => {
   }, []);
 
   function showPosition(position) {
-    debugger;
     const lat = position.coords.latitude.toFixed(9);
     const long = position.coords.longitude.toFixed(9);
+    setCurrentGeoLocation({
+      latitude: lat,
+      longitude: long,
+    });
     console.log(`Latitude: ${lat}, Longitude: ${long}`);
   }
   const loadGrid = () => {
