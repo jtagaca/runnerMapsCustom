@@ -303,15 +303,19 @@ const AlgoVisualizer = () => {
   // create a function to load the grid from a text file using stringified JSON
   useEffect(() => {
     if (navigator.geolocation) {
-      console.log(
-        "current geolocation" +
-          navigator.geolocation.getCurrentPosition(showPosition)
-      );
+      // Call showPosition() once initially to get the current location
+      navigator.geolocation.getCurrentPosition(showPosition);
+      // Set an interval to call getCurrentPosition() every 1 second
+      const intervalId = setInterval(() => {
+        console.log("new geolocations");
+        navigator.geolocation.getCurrentPosition(showPosition);
+      }, 1000);
+      // Return a cleanup function to clear the interval when the component unmounts
+      return () => clearInterval(intervalId);
     } else {
       console.log("Geolocation is not supported by this browser.");
     }
   }, []);
-
   function showPosition(position) {
     const lat = position.coords.latitude.toFixed(9);
     const long = position.coords.longitude.toFixed(9);
