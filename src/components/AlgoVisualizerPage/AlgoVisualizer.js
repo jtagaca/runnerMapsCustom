@@ -52,6 +52,7 @@ const AlgoVisualizer = () => {
     currentSelectedPredefinedMarkers,
     setCurrentSelectedPredefinedMarkers,
   ] = useState({});
+  const [currentTimestamp, setCurrentTimestamp] = useState(null);
   const [
     currentGeolocationForPredefinedMarker,
     setcurrentGeolocationForPredefinedMarker,
@@ -170,13 +171,18 @@ const AlgoVisualizer = () => {
   const [selectingWall, setSelectingWall] = useState(false);
   const [plottingGeolocation, setPlottingGeolocation] = useState(false);
 
-  const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: true,
-      },
-      userDecisionTimeout: 5000,
-    });
+  const {
+    coords,
+    timestamp,
+    isGeolocationAvailable,
+    isGeolocationEnabled,
+    getPosition,
+  } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    userDecisionTimeout: 5000,
+  });
 
   function getCurrentGeoLocation() {
     if (coords) {
@@ -191,9 +197,14 @@ const AlgoVisualizer = () => {
   function buttonFunctionToGetCurrentLocation() {
     getPosition();
     console.log("new coords" + coords.latitude + " " + coords.longitude);
+    setCurrentTimestamp(timestamp);
+    // setcurrentGeolocationForPredefinedMarker({
+    //   latitude: currentGeoLocation.latitude,
+    //   longitude: currentGeoLocation.longitude,
+    // });
     setcurrentGeolocationForPredefinedMarker({
-      latitude: currentGeoLocation.latitude,
-      longitude: currentGeoLocation.longitude,
+      latitude: coords.latitude,
+      longitude: coords.longitude,
     });
   }
 
@@ -901,7 +912,16 @@ const AlgoVisualizer = () => {
       {" "}
       current geolocation: latitude: {
         currentGeoLocation.latitude
-      } longitude: {currentGeoLocation.longitude}
+      } longitude: {currentGeoLocation.longitude} latest time stamp:{" "}
+      {currentTimestamp}
+      {/* convert epoch time to human readable with my timezon  */}
+      {currentTimestamp != 0 ? (
+        <div>
+          {new Date(currentTimestamp * 1000).toLocaleString("en-US", {
+            timeZone: "America/Los_Angeles",
+          })}
+        </div>
+      ) : null}
       <Modal
         show={show}
         onHide={handleClose}
