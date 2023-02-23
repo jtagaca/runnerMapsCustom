@@ -20,6 +20,9 @@ for (var i = 0; i < gridRowLength; i++) {
     baseGrid[i][j] = -1;
   }
 }
+let currentLatitude = null;
+let currentLongitude = null;
+
 const predefinedTextVisuals = {};
 predefinedTextVisuals[[1, 9]] = {
   direction: "Head Straight",
@@ -332,6 +335,8 @@ const AlgoVisualizer = () => {
   function showPosition(position) {
     const lat = position.coords.latitude.toFixed(9);
     const long = position.coords.longitude.toFixed(9);
+    currentLatitude = lat;
+    currentLongitude = long;
     setCurrentGeoLocation({
       latitude: lat,
       longitude: long,
@@ -915,13 +920,9 @@ const AlgoVisualizer = () => {
       } longitude: {currentGeoLocation.longitude} latest time stamp:{" "}
       {currentTimestamp}
       {/* convert epoch time to human readable with my timezon  */}
-      {currentTimestamp != 0 ? (
-        <div>
-          {new Date(currentTimestamp * 1000).toLocaleString("en-US", {
-            timeZone: "America/Los_Angeles",
-          })}
-        </div>
-      ) : null}
+      {" \n"}
+      {"global latitude variable " + currentLatitude}
+      {"global longitude variable " + currentLongitude}
       <Modal
         show={show}
         onHide={handleClose}
