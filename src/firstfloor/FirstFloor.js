@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
 import "./firstfloor.css";
-import { dijkstraAlgo } from "../../algorithms/dijkstraAlgo";
+import { dijkstraAlgo } from "../algorithms/dijkstraAlgo";
 import { useHistory } from "react-router-dom";
 import Button from "react-bootstrap/Button";
 import NumericInput from "react-numeric-input";
@@ -1056,7 +1056,7 @@ const FirstFloor = () => {
             transform: "rotate(" + currentRotationDegree + "deg)",
           }}
         >
-          <div className="grid">
+          <div className="grid2">
             {grid.map((row, rowIndex) => {
               return row.map((cell, colIndex) => {
                 return (

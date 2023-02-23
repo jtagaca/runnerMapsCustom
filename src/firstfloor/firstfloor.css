@@ -45,7 +45,7 @@
 .selectedMarker {
   background-color: #ff0000 !important;
 }
-.grid {
+.grid2 {
   display: grid;
   grid-template-columns: repeat(52, 1fr);
   transition: all 1s ease;
