@@ -9,6 +9,7 @@ import { useGeolocated } from "react-geolocated";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import cloneDeep from "lodash/cloneDeep";
+import { Coordinate } from "geolocation-coordinate";
 
 const baseGrid = [];
 let gridRowLength = 20;
@@ -178,6 +179,14 @@ const FirstFloor = () => {
       userDecisionTimeout: 5000,
     });
 
+  navigator.geolocation.getCurrentPosition((position) => {
+    let { latitude, longitude } = position.coords;
+
+    let latCoord = new Coordinate(latitude, "latitude");
+    let lngCoord = new Coordinate(longitude, "longitude");
+    console.log(latCoord.degrees + " " + lngCoord);
+    // latCoord.degrees; // 59.2349887712
+  });
   function getCurrentGeoLocation() {
     if (coords) {
       return {
@@ -233,7 +242,7 @@ const FirstFloor = () => {
 
     tempGrid[prevStartRowIndex][prevStartColIndex] = -1;
     tempGrid[prevEndRowIndex][prevEndColIndex] = -1;
-    debugger;
+
     tempGrid[initializedPosition.startRowIndex][
       initializedPosition.startColIndex
     ] = 0;
@@ -327,7 +336,7 @@ const FirstFloor = () => {
           tempGrid[row].push(-1);
         }
       }
-      debugger;
+
       for (let i = 0; i < walls.length; i++) {
         let row = walls[i].row;
         let col = walls[i].col;

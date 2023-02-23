@@ -1076,7 +1076,7 @@ const AlgoVisualizer = () => {
             transform: "rotate(" + currentRotationDegree + "deg)",
           }}
         >
-          <div className="grid">
+          <div className="grid3">
             {grid.map((row, rowIndex) => {
               return row.map((cell, colIndex) => {
                 return (
