@@ -7,7 +7,7 @@
       "col": 42,
       "latitude": 35.3490021,
       "longitude": -119.1035615,
-      "image_url": "",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/214.jpg",
       "is_target_location": true,
       "name": "214"
     },
@@ -16,7 +16,7 @@
       "col": 3,
       "latitude": 35.3490855,
       "longitude": -119.1039085,
-      "image_url": "https://drive.google.com/file/d/10PBnILcIudQK2wr9WU79A1VRNPLSZbWq/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/door_13_2.jpg",
       "is_target_location": true,
       "name": "200"
     },
@@ -25,7 +25,7 @@
       "col": 2,
       "latitude": 35.3490867,
       "longitude": -119.1039598,
-      "image_url": "https://drive.google.com/file/d/10SPQg9JMizzX-tWMozb2L35dn9PYq6b5/view?usp=share_link [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/door_13_2.jpg",
       "is_target_location": true,
       "name": "door"
     },
@@ -34,7 +34,7 @@
       "col": 1,
       "latitude": 35.3490634,
       "longitude": -119.1039994,
-      "image_url": "https://drive.google.com/file/d/10OGtwvsWvjhqdlm3V66w0GnGiWoY4gVn/view?usp=share_link [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/stairs_15_1.jpg",
       "is_target_location": true,
       "name": "stairs"
     },
@@ -43,7 +43,7 @@
       "col": 5,
       "latitude": 35.34906134207498,
       "longitude": -119.10393945509432,
-      "image_url": "https://drive.google.com/file/d/10dDSLdi497vy184MrQAQ-zsrShJcUr6i/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/201.jpg",
       "is_target_location": true,
       "name": "201"
     },
@@ -51,9 +51,8 @@
       "row": 15,
       "col": 7,
       "latitude": 35.34905929091048,
-
       "longitude": -119.10392636194054,
-      "image_url": "https://drive.google.com/file/d/10TZSpEuvm4HTzrcUzYsQlc7PYfi1pY_g/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/202.jpg",
       "is_target_location": true,
       "name": "202"
     },
@@ -62,7 +61,7 @@
       "col": 9,
       "latitude": 35.34905687861314,
       "longitude": -119.10391181434684,
-      "image_url": "https://drive.google.com/file/d/11ES8pMYigKYovZUA96Z7r0PHP9kX8tLV/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/203.jpg",
       "is_target_location": true,
       "name": "203"
     },
@@ -71,7 +70,7 @@
       "col": 11,
       "latitude": 35.3490562,
       "longitude": -119.1038866,
-      "image_url": "https://drive.google.com/file/d/11DWT54eNR-4wV8OlRih_Whaadi_IKWjb/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/204.jpg",
       "is_target_location": true,
       "name": "204"
     },
@@ -80,7 +79,7 @@
       "col": 12,
       "latitude": 35.3490038,
       "longitude": -119.1037904,
-      "image_url": "https://drive.google.com/file/d/10obXhKjDmDV4cv8iXGsiqkKI1bLnNp10/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/restroom.jpg",
       "is_target_location": true,
       "name": "restroom"
     },
@@ -89,7 +88,7 @@
       "col": 13,
       "latitude": 35.3490082,
       "longitude": -119.1038215,
-      "image_url": "https://drive.google.com/file/d/10gKaZMkrsTXGBJ_GvQiTaDYgS7CI9YnP/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/205.jpg",
       "is_target_location": true,
       "name": "205"
     },
@@ -98,7 +97,7 @@
       "col": 15,
       "latitude": 35.3490087,
       "longitude": -119.1037878,
-      "image_url": "https://drive.google.com/file/d/11MxHJ1vnZcJGpkoPnDbePQnemue0Uw0o/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/206.jpg",
       "is_target_location": true,
       "name": "206"
     },
@@ -107,7 +106,7 @@
       "col": 19,
       "latitude": 35.3490086,
       "longitude": -119.1037879,
-      "image_url": "https://drive.google.com/file/d/11IQRrwXUxwVIxwYjQnClxSo8ybf_SY_7/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/207.jpg",
       "is_target_location": true,
       "name": "207"
     },
@@ -116,7 +115,7 @@
       "col": 23,
       "latitude": 35.3490279,
       "longitude": -119.1037308,
-      "image_url": "https://drive.google.com/file/d/11EelLnFiQJ5oc8aoHPT3SD8nJtuqBdjh/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/209.jpg",
       "is_target_location": true,
       "name": "209"
     },
@@ -125,7 +124,7 @@
       "col": 22,
       "latitude": 35.3490134,
       "longitude": -119.1037854,
-      "image_url": "https://drive.google.com/file/d/11GCPIpjr09ZRJucqLQfdfzdE-CPgC0gS/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/208.jpg",
       "is_target_location": true,
       "name": "208"
     },
@@ -134,7 +133,7 @@
       "col": 28,
       "latitude": 35.3490606,
       "longitude": -119.1036244,
-      "image_url": "https://drive.google.com/file/d/11oe4XRI7P205-yc-WYpSHYyw0g95cZPI/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/211.jpg",
       "is_target_location": true,
       "name": "211"
     },
@@ -143,7 +142,7 @@
       "col": 27,
       "latitude": 35.3490565,
       "longitude": -119.1036689,
-      "image_url": "https://drive.google.com/file/d/126v3dlnxLlRuOcUIrAknl4bzh5TFEryC/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/210.jpg",
       "is_target_location": true,
       "name": "210"
     },
@@ -152,7 +151,7 @@
       "col": 32,
       "latitude": 35.349058,
       "longitude": -119.1036232,
-      "image_url": "https://drive.google.com/file/d/11tRrVggiWPkMmu1erLaHcFfWxfkRHyH1/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/212.jpg",
       "is_target_location": true,
       "name": "212"
     },
@@ -161,7 +160,7 @@
       "col": 23,
       "latitude": 35.3490327,
       "longitude": -119.103618,
-      "image_url": "https://drive.google.com/file/d/12_T_UuwuRuwVjjqnEY3SHgFSaWNCMsNn/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/217.jpg",
       "is_target_location": true,
       "name": "217"
     },
@@ -170,7 +169,7 @@
       "col": 26,
       "latitude": 35.3490088,
       "longitude": -119.1036155,
-      "image_url": "https://drive.google.com/file/d/12Z4-LcUz2UJAEz7ruPaG1LXwBGbHiiA0/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/218.jpg",
       "is_target_location": true,
       "name": "218"
     },
@@ -179,7 +178,7 @@
       "col": 28,
       "latitude": 35.3490082,
       "longitude": -119.1035934,
-      "image_url": "https://drive.google.com/file/d/12T8MmkvJz3lawdgxOVYKPeZp5mgdeNl6/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/219.jpg",
       "is_target_location": true,
       "name": "219"
     },
@@ -188,7 +187,7 @@
       "col": 23,
       "latitude": 35.3490113,
       "longitude": -119.1036027,
-      "image_url": "https://drive.google.com/file/d/12cjIpctNWMRidWJZmbMkDsAp0fb_8-9Z/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/216.jpg",
       "is_target_location": true,
       "name": "216"
     },
@@ -197,7 +196,7 @@
       "col": 38,
       "latitude": 35.3489964,
       "longitude": -119.103565,
-      "image_url": "https://drive.google.com/file/d/12lnR9csgGHRmiKnyPpRLeXYpAM_52Uow/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/222.jpg",
       "is_target_location": true,
       "name": "222"
     },
@@ -206,7 +205,7 @@
       "col": 30,
       "latitude": 35.3490303,
       "longitude": -119.1037139,
-      "image_url": "https://drive.google.com/file/d/12iG4d0CmfrKtRrABJXJu_pZox1bZoA79/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/220.jpg",
       "is_target_location": true,
       "name": "220"
     },
@@ -215,7 +214,7 @@
       "col": 42,
       "latitude": 35.3489952,
       "longitude": -119.1035518,
-      "image_url": "https://drive.google.com/file/d/12mAm11KTtdXnLVbY1Pyfz6cPm0mn921Z/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/223.jpg",
       "is_target_location": true,
       "name": "223"
     },
@@ -224,7 +223,7 @@
       "col": 34,
       "latitude": 35.3489978,
       "longitude": -119.1035625,
-      "image_url": "https://drive.google.com/file/d/12jvM0ZURxbpDQZeFAi34269CMbckRjEy/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/221.jpg",
       "is_target_location": true,
       "name": "221"
     },
@@ -233,7 +232,7 @@
       "col": 46,
       "latitude": 35.3489943,
       "longitude": -119.103555,
-      "image_url": "https://drive.google.com/file/d/13-DiB0DwSLJnLkIzBJTchpIo7lBC2OoK/view?usp=share_link [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/226.jpg",
       "is_target_location": true,
       "name": "226"
     },
@@ -242,7 +241,7 @@
       "col": 46,
       "latitude": 35.348991,
       "longitude": -119.1035572,
-      "image_url": "https://drive.google.com/file/d/138Eje3foS5HxjecdWq4fbgwEYY0OChFt/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/225.jpg",
       "is_target_location": true,
       "name": "225"
     },
@@ -251,7 +250,7 @@
       "col": 46,
       "latitude": 35.3489987,
       "longitude": -119.1035532,
-      "image_url": "https://drive.google.com/file/d/13JoqSgioI1zRqfWBsVS6fEYOGLFTwvHt/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/224.jpg",
       "is_target_location": true,
       "name": "224"
     },
@@ -260,7 +259,7 @@
       "col": 46,
       "latitude": 35.3490015,
       "longitude": -119.1035411,
-      "image_url": "https://drive.google.com/file/d/13fcDBo5sLJn9YH2977sQOIuOkP-99Jjk/view?usp=share_link [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/door_13_46.jpg",
       "is_target_location": true,
       "name": "door"
     },
@@ -269,7 +268,7 @@
       "col": 48,
       "latitude": 35.3489978,
       "longitude": -119.1035364,
-      "image_url": "https://drive.google.com/file/d/13afOtkk26RANXmCn6wzlPNUZgEQxi8VN/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/stairs_15_48.jpg",
       "is_target_location": true,
       "name": "stairs"
     },
@@ -278,7 +277,7 @@
       "col": 44,
       "latitude": 35.3489994,
       "longitude": -119.103562,
-      "image_url": "https://drive.google.com/file/d/13MZ4BIlwVD2Gd3fsfSmEKLmQ9Gs3aRbP/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/215.jpg",
       "is_target_location": true,
       "name": "215"
     },
@@ -287,7 +286,7 @@
       "col": 30,
       "latitude": 35.3490268,
       "longitude": -119.1035882,
-      "image_url": "https://drive.google.com/file/d/12GEQpSeSkHjFqmMM4VOkEvPJV3eg0dpU/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/213.jpg",
       "is_target_location": true,
       "name": "213"
     },
@@ -296,7 +295,7 @@
       "col": 42,
       "latitude": 35.3491015,
       "longitude": -119.1036097,
-      "image_url": "https://drive.google.com/file/d/13ktJJ31gkGm9-WN4fYZKbNtlm5FwO5PU/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/245.jpg",
       "is_target_location": true,
       "name": "245"
     },
@@ -305,7 +304,7 @@
       "col": 45,
       "latitude": 35.3490633,
       "longitude": -119.1035235,
-      "image_url": "https://drive.google.com/file/d/13rEmlikBKYa9jE6pIjtFZlWinCD5b5YG/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/248.jpg",
       "is_target_location": true,
       "name": "248"
     },
@@ -314,7 +313,7 @@
       "col": 39,
       "latitude": 35.3490811,
       "longitude": -119.1035575,
-      "image_url": "https://drive.google.com/file/d/13j7BIiohrqHFFRhlY2TOEBnFNsiMglwZ/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/244.jpg",
       "is_target_location": true,
       "name": "244"
     },
@@ -323,7 +322,7 @@
       "col": 45,
       "latitude": 35.3490686,
       "longitude": -119.1035386,
-      "image_url": "https://drive.google.com/file/d/13nx14zU6oPcedWD9ZYtgDP3bwcvJ8myV/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/247.jpg",
       "is_target_location": true,
       "name": "247"
     },
@@ -332,7 +331,7 @@
       "col": 36,
       "latitude": 35.349086,
       "longitude": -119.1036204,
-      "image_url": "https://drive.google.com/file/d/145yjtAreFMk_3FNxIQGOnB_8yJF7NVuy/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/243.jpg",
       "is_target_location": true,
       "name": "243"
     },
@@ -341,7 +340,7 @@
       "col": 33,
       "latitude": 35.3490796,
       "longitude": -119.1036355,
-      "image_url": "https://drive.google.com/file/d/1448uKRmcytAZuLA3lterJkNoOgd4PSNa/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/242.jpg",
       "is_target_location": true,
       "name": "242"
     },
@@ -350,7 +349,7 @@
       "col": 30,
       "latitude": 35.3490847,
       "longitude": -119.1036333,
-      "image_url": "https://drive.google.com/file/d/14AE8uw1H_dr8-FzIbFAYRiVGwbyM-_ea/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/241.jpg",
       "is_target_location": true,
       "name": "241"
     },
@@ -359,7 +358,7 @@
       "col": 27,
       "latitude": 35.349084,
       "longitude": -119.1036427,
-      "image_url": "https://drive.google.com/file/d/14CWrHqEO9CbxzGBoiNMndDg-XGw2HwRz/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/238.jpg",
       "is_target_location": true,
       "name": "238"
     },
@@ -368,7 +367,7 @@
       "col": 29,
       "latitude": 35.3490785,
       "longitude": -119.1036345,
-      "image_url": "https://drive.google.com/file/d/13v1mNgBgSIbfzrXpaW8UmRHVr-aGrMbb/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/240.jpg",
       "is_target_location": true,
       "name": "240"
     },
@@ -377,7 +376,7 @@
       "col": 23,
       "latitude": 35.3490757,
       "longitude": -119.10364,
-      "image_url": "https://drive.google.com/file/d/13s7SxUfm1rjQ3XO1xUWKgBBKcLYS9w48/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/239.jpg",
       "is_target_location": true,
       "name": "239"
     },
@@ -386,7 +385,7 @@
       "col": 24,
       "latitude": 35.3490524,
       "longitude": -119.1036898,
-      "image_url": "https://drive.google.com/file/d/14H8mnTsvwYCLOgGW3K0rrVi7nflX8J9Q/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/237.jpg",
       "is_target_location": true,
       "name": "237"
     },
@@ -395,7 +394,7 @@
       "col": 21,
       "latitude": 35.3490446,
       "longitude": -119.1037043,
-      "image_url": "https://drive.google.com/file/d/14M_ZaogH9Xb7xyf6DDI5pKjXTqs30iHs/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/235.jpg",
       "is_target_location": true,
       "name": "235"
     },
@@ -404,7 +403,7 @@
       "col": 13,
       "latitude": 35.3490431,
       "longitude": -119.1039196,
-      "image_url": "https://drive.google.com/file/d/14n1vGdnZzflqLyS6v3K692tw2jdFSY4u/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/232.jpg",
       "is_target_location": true,
       "name": "232"
     },
@@ -413,7 +412,7 @@
       "col": 21,
       "latitude": 35.3490113,
       "longitude": -119.1037522,
-      "image_url": "https://drive.google.com/file/d/14TkvzPbdIcR1otaw6hUJHGeLDGKk1N1-/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/236.jpg",
       "is_target_location": true,
       "name": "236"
     },
@@ -422,7 +421,7 @@
       "col": 13,
       "latitude": 35.3490854,
       "longitude": -119.1038227,
-      "image_url": "https://drive.google.com/file/d/14UYZzo4AF0Sbkg4kCUHavKqKJRja4cCk/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/231.jpg",
       "is_target_location": true,
       "name": "231"
     },
@@ -431,7 +430,7 @@
       "col": 18,
       "latitude": 35.3490038,
       "longitude": -119.1037666,
-      "image_url": "https://drive.google.com/file/d/14xuePlZqB_dpss8rLSkE3bRg1zTvUeJS/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/234.jpg",
       "is_target_location": true,
       "name": "234"
     },
@@ -440,7 +439,7 @@
       "col": 15,
       "latitude": 35.3490068,
       "longitude": -119.1037773,
-      "image_url": "https://drive.google.com/file/d/14n_gQWKwHb1D_YUG7-eiXBEiVDk1XE6Y/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/233.jpg",
       "is_target_location": true,
       "name": "233"
     },
@@ -449,7 +448,7 @@
       "col": 7,
       "latitude": 35.349186889387084,
       "longitude": -119.10406003360154,
-      "image_url": "https://drive.google.com/file/d/1508srQLFdM0OtsOy62BHZmbWrLitBMvg/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/228.jpg",
       "is_target_location": true,
       "name": "228"
     },
@@ -458,7 +457,7 @@
       "col": 9,
       "latitude": 35.3490642,
       "longitude": -119.1039126,
-      "image_url": "https://drive.google.com/file/d/150G32o0uRhYq-uZ28c2w7EuFcev4653m/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/229.jpg",
       "is_target_location": true,
       "name": "229"
     },
@@ -467,7 +466,7 @@
       "col": 11,
       "latitude": 35.3490524,
       "longitude": -119.1039036,
-      "image_url": "https://drive.google.com/file/d/151tEqrX9qjGjtz7seycGdk7F3QVADu2r/view?usp=sharing [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/230.jpg",
       "is_target_location": true,
       "name": "230"
     },
@@ -476,7 +475,7 @@
       "col": 9,
       "latitude": 35.3490749,
       "longitude": -119.1039896,
-      "image_url": "https://drive.google.com/file/d/156kbbfk7NwuwBObXtx0AgVcvsPYwK2iK/view?usp=share_link [drive.google.com]",
+      "image_url": "https://www.cs.csub.edu/~runnermaps/images/science3/floor2/elevator.jpg",
       "is_target_location": true,
       "name": "elevator"
     }
@@ -505,7 +504,7 @@
       "col": 8,
       "latitude": 35.3490418,
       "longitude": -119.1039484,
-      "image_url": "https://drive.google.com/file/d/10_IEuURt31g3nnWJT-la-GK8ig29-VQQ/view?usp=sharing [drive.google.com]",
+      "image_url": "",
       "is_target_location": false,
       "name": ""
     },
@@ -514,7 +513,7 @@
       "col": 6,
       "latitude": 35.349064,
       "longitude": -119.1039323,
-      "image_url": "https://drive.google.com/file/d/10bVgouI9iGVbfguvd6cghwOpSR_g6zBm/view?usp=share_link [drive.google.com]",
+      "image_url": "",
       "is_target_location": false,
       "name": ""
     },
