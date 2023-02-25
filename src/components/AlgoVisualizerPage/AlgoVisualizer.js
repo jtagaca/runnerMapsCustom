@@ -71,11 +71,23 @@ const AlgoVisualizer = () => {
     row: -1,
     col: -1,
   });
+  const [keyValueData, setKeyValueData] = useState(null);
   const [currentName, setCurrentName] = useState("");
   const [currentStartPos, setCurrentStartPos] = useState("");
   const [currentEndPos, setCurrentEndPos] = useState("");
   const [currentImageUrl, setCurrentImageUrl] = useState("");
   const [show, setShow] = useState(false);
+  const [currentStartPositionGeolocation, setCurrentStartPositionGeolocation] =
+    useState({
+      latitude: "",
+      longitude: "",
+    });
+
+  const [currentEndPositionGeolocation, setCurrentEndPositionGeolocation] =
+    useState({
+      latitude: "",
+      longitude: "",
+    });
 
   useEffect(() => {
     console.log(
@@ -376,20 +388,30 @@ const AlgoVisualizer = () => {
           `.node-${row}-${col}`
         ).className = `eachCell node-${row}-${col} wall`;
       }
+      let currentTempKeyValue = {};
       for (let i = 0; i < target_locations.length; i++) {
+        let key =
+          target_locations[i].name +
+          " " +
+          target_locations[i].row +
+          "," +
+          target_locations[i].col;
         let row = target_locations[i].row;
         let col = target_locations[i].col;
         // tempGrid[row][col] = "ROOM";
         document.querySelector(
           `.node-${row}-${col}`
         ).className = `eachCell node-${row}-${col} room`;
+        currentTempKeyValue[key] = target_locations[i];
       }
       for (let i = 0; i < markers.length; i++) {
         let row = markers[i].row;
         let col = markers[i].col;
+        let key = markers[i].row + "," + markers[i].col;
         document.querySelector(
           `.node-${row}-${col}`
         ).className = `eachCell node-${row}-${col} marker`;
+        currentTempKeyValue[key] = markers[i];
       }
       let merge = [];
       let tempcurrentselectedpredefinedmarkers = {};
@@ -399,6 +421,7 @@ const AlgoVisualizer = () => {
           merge[i];
       }
 
+      setKeyValueData({ ...currentTempKeyValue });
       setGrid([...tempGrid]);
       // setCurrentSelectedPredefinedMarkers(
       //   ...tempcurrentselectedpredefinedmarkers
@@ -899,6 +922,28 @@ const AlgoVisualizer = () => {
     setGrid(previousGrid);
   };
 
+  useEffect(() => {
+    console.log(
+      "current start geolocation latitude" +
+        currentStartPositionGeolocation.latitude
+    );
+    console.log(
+      "current start geolocation longitude" +
+        currentStartPositionGeolocation.longitude
+    );
+  }, [currentStartPositionGeolocation]);
+
+  useEffect(() => {
+    console.log(
+      "current end geolocation latitude" +
+        currentEndPositionGeolocation.latitude
+    );
+    console.log(
+      "current End geolocation longitude" +
+        currentEndPositionGeolocation.longitude
+    );
+  }, [currentEndPositionGeolocation]);
+
   function test() {
     const a = { latitude: 35.45063, longitude: -119.105934 };
     const b = { latitude: 35.450621, longitude: -119.105955 };
@@ -906,11 +951,25 @@ const AlgoVisualizer = () => {
     //console.log(t);
   }
 
+  function computeDistanceBetweenTwoPoints() {
+    alert(
+      haversineDistance(
+        currentStartPositionGeolocation,
+        currentEndPositionGeolocation
+      )
+    );
+  }
   useEffect(() => {
     console.log("isCellRoom", isCellRoom);
     console.log("currentImageUrl", currentImageUrl);
   }, [isCellRoom, currentImageUrl]);
 
+  let currentStartGeolocationVariable = null;
+  let currentEndGeolocationVariable = null;
+
+  useEffect(() => {
+    console.log("keyValues", keyValueData);
+  }, [keyValueData]);
   let rotationDegree = "180";
   return (
     <>
@@ -1078,6 +1137,7 @@ const AlgoVisualizer = () => {
               });
             }}
           />
+
           <div>select destination location: {currentEndPos} </div>
 
           <Select
@@ -1099,6 +1159,68 @@ const AlgoVisualizer = () => {
               });
             }}
           />
+
+          <div>
+            select start geo location: {currentStartGeolocationVariable}
+          </div>
+          <Select
+            style={{ width: "100px", color: "black" }}
+            placeholder="select geolocation start location"
+            options={currentoptions}
+            onChange={(e) => {
+              if (
+                e.label.length === 3 ||
+                e.label.length === 4 ||
+                e.label.length === 5 ||
+                e.label.length === 6
+              ) {
+                e.label = e.label.replace(/\s/g, "");
+              }
+              setCurrentStartPositionGeolocation({
+                latitude: keyValueData[e.label].latitude,
+                longitude: keyValueData[e.label].longitude,
+              });
+              let row = keyValueData[e.label].row;
+              let col = keyValueData[e.label].col;
+              document.querySelector(
+                `.node-${row}-${col}`
+              ).className = `eachCell node-${row}-${col} start`;
+            }}
+          />
+          <div>select end geo location: {currentEndPos} </div>
+          <Select
+            style={{ width: "100px", color: "black" }}
+            placeholder="select geolocation start location"
+            options={currentoptions}
+            onChange={(e) => {
+              // remove whitespace in e.label;
+              // if length of label is 2 or 3 then
+              if (
+                e.label.length === 3 ||
+                e.label.length === 4 ||
+                e.label.length === 5 ||
+                e.label.length === 6
+              ) {
+                e.label = e.label.replace(/\s/g, "");
+              }
+              setCurrentEndPositionGeolocation({
+                latitude: keyValueData[e.label].latitude,
+                longitude: keyValueData[e.label].longitude,
+              });
+              let row = keyValueData[e.label].row;
+              let col = keyValueData[e.label].col;
+              document.querySelector(
+                `.node-${row}-${col}`
+              ).className = `eachCell node-${row}-${col} end`;
+            }}
+          />
+          <Button
+            variant="dark"
+            className="solveBtn col-md-3 mx-3"
+            onClick={computeDistanceBetweenTwoPoints}
+          >
+            get distance
+          </Button>
         </div>
 
         <div

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-import "./firstfloor.css";
 import { dijkstraAlgo } from "../algorithms/dijkstraAlgo";
 import { useHistory } from "react-router-dom";
 import Button from "react-bootstrap/Button";
@@ -9,7 +8,7 @@ import { useGeolocated } from "react-geolocated";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import cloneDeep from "lodash/cloneDeep";
-import { Coordinate } from "geolocation-coordinate";
+import "./firstfloor.css";
 
 const baseGrid = [];
 let gridRowLength = 20;
@@ -21,6 +20,9 @@ for (var i = 0; i < gridRowLength; i++) {
     baseGrid[i][j] = -1;
   }
 }
+let currentLatitude = null;
+let currentLongitude = null;
+
 const predefinedTextVisuals = {};
 predefinedTextVisuals[[1, 9]] = {
   direction: "Head Straight",
@@ -53,6 +55,7 @@ const FirstFloor = () => {
     currentSelectedPredefinedMarkers,
     setCurrentSelectedPredefinedMarkers,
   ] = useState({});
+  const [currentTimestamp, setCurrentTimestamp] = useState(null);
   const [
     currentGeolocationForPredefinedMarker,
     setcurrentGeolocationForPredefinedMarker,
@@ -68,11 +71,23 @@ const FirstFloor = () => {
     row: -1,
     col: -1,
   });
+  const [keyValueData, setKeyValueData] = useState(null);
   const [currentName, setCurrentName] = useState("");
   const [currentStartPos, setCurrentStartPos] = useState("");
   const [currentEndPos, setCurrentEndPos] = useState("");
   const [currentImageUrl, setCurrentImageUrl] = useState("");
   const [show, setShow] = useState(false);
+  const [currentStartPositionGeolocation, setCurrentStartPositionGeolocation] =
+    useState({
+      latitude: "",
+      longitude: "",
+    });
+
+  const [currentEndPositionGeolocation, setCurrentEndPositionGeolocation] =
+    useState({
+      latitude: "",
+      longitude: "",
+    });
 
   useEffect(() => {
     console.log(
@@ -171,22 +186,19 @@ const FirstFloor = () => {
   const [selectingWall, setSelectingWall] = useState(false);
   const [plottingGeolocation, setPlottingGeolocation] = useState(false);
 
-  const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: 5000,
-    });
-
-  navigator.geolocation.getCurrentPosition((position) => {
-    let { latitude, longitude } = position.coords;
-
-    let latCoord = new Coordinate(latitude, "latitude");
-    let lngCoord = new Coordinate(longitude, "longitude");
-    console.log(latCoord.degrees + " " + lngCoord);
-    // latCoord.degrees; // 59.2349887712
+  const {
+    coords,
+    timestamp,
+    isGeolocationAvailable,
+    isGeolocationEnabled,
+    getPosition,
+  } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: true,
+    },
+    userDecisionTimeout: 5000,
   });
+
   function getCurrentGeoLocation() {
     if (coords) {
       return {
@@ -198,10 +210,16 @@ const FirstFloor = () => {
   }
 
   function buttonFunctionToGetCurrentLocation() {
-    const currentGeoLocationtemp = getCurrentGeoLocation();
+    getPosition();
+    console.log("new coords" + coords.latitude + " " + coords.longitude);
+    setCurrentTimestamp(timestamp);
+    // setcurrentGeolocationForPredefinedMarker({
+    //   latitude: currentGeoLocation.latitude,
+    //   longitude: currentGeoLocation.longitude,
+    // });
     setcurrentGeolocationForPredefinedMarker({
-      latitude: currentGeoLocationtemp.latitude,
-      longitude: currentGeoLocationtemp.longitude,
+      latitude: coords.latitude,
+      longitude: coords.longitude,
     });
   }
 
@@ -242,7 +260,6 @@ const FirstFloor = () => {
 
     tempGrid[prevStartRowIndex][prevStartColIndex] = -1;
     tempGrid[prevEndRowIndex][prevEndColIndex] = -1;
-
     tempGrid[initializedPosition.startRowIndex][
       initializedPosition.startColIndex
     ] = 0;
@@ -312,7 +329,32 @@ const FirstFloor = () => {
   };
 
   // create a function to load the grid from a text file using stringified JSON
-
+  useEffect(() => {
+    if (navigator.geolocation) {
+      // Call showPosition() once initially to get the current location
+      navigator.geolocation.getCurrentPosition(showPosition);
+      // Set an interval to call getCurrentPosition() every 1 second
+      const intervalId = setInterval(() => {
+        console.log("new geolocations");
+        navigator.geolocation.getCurrentPosition(showPosition);
+      }, 1000);
+      // Return a cleanup function to clear the interval when the component unmounts
+      return () => clearInterval(intervalId);
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  }, []);
+  function showPosition(position) {
+    const lat = position.coords.latitude.toFixed(9);
+    const long = position.coords.longitude.toFixed(9);
+    currentLatitude = lat;
+    currentLongitude = long;
+    setCurrentGeoLocation({
+      latitude: lat,
+      longitude: long,
+    });
+    console.log(`Latitude: ${lat}, Longitude: ${long}`);
+  }
   const loadGrid = () => {
     const fileInput = document.querySelector('input[type="file"]');
     const reader = new FileReader();
@@ -346,20 +388,30 @@ const FirstFloor = () => {
           `.node-${row}-${col}`
         ).className = `eachCell node-${row}-${col} wall`;
       }
+      let currentTempKeyValue = {};
       for (let i = 0; i < target_locations.length; i++) {
+        let key =
+          target_locations[i].name +
+          " " +
+          target_locations[i].row +
+          "," +
+          target_locations[i].col;
         let row = target_locations[i].row;
         let col = target_locations[i].col;
         // tempGrid[row][col] = "ROOM";
         document.querySelector(
           `.node-${row}-${col}`
         ).className = `eachCell node-${row}-${col} room`;
+        currentTempKeyValue[key] = target_locations[i];
       }
       for (let i = 0; i < markers.length; i++) {
         let row = markers[i].row;
         let col = markers[i].col;
+        let key = markers[i].row + "," + markers[i].col;
         document.querySelector(
           `.node-${row}-${col}`
         ).className = `eachCell node-${row}-${col} marker`;
+        currentTempKeyValue[key] = markers[i];
       }
       let merge = [];
       let tempcurrentselectedpredefinedmarkers = {};
@@ -369,6 +421,7 @@ const FirstFloor = () => {
           merge[i];
       }
 
+      setKeyValueData({ ...currentTempKeyValue });
       setGrid([...tempGrid]);
       // setCurrentSelectedPredefinedMarkers(
       //   ...tempcurrentselectedpredefinedmarkers
@@ -418,6 +471,10 @@ const FirstFloor = () => {
       "'Green Grid' -> starting point \n'Red Grid'-> endpoint \n  1️⃣ Drag the green or red grid to your desired location on the grid. \n  2️⃣ Click and drag your mouse to the empty cells to mark them as a wall.\n  3️⃣ Click the 'Find Path' button. ✨  "
     );
   };
+
+  useEffect(() => {
+    console.log(grid);
+  }, [grid]);
 
   function getClosestMarkers() {
     let closestMarkers = [];
@@ -865,6 +922,28 @@ const FirstFloor = () => {
     setGrid(previousGrid);
   };
 
+  useEffect(() => {
+    console.log(
+      "current start geolocation latitude" +
+        currentStartPositionGeolocation.latitude
+    );
+    console.log(
+      "current start geolocation longitude" +
+        currentStartPositionGeolocation.longitude
+    );
+  }, [currentStartPositionGeolocation]);
+
+  useEffect(() => {
+    console.log(
+      "current end geolocation latitude" +
+        currentEndPositionGeolocation.latitude
+    );
+    console.log(
+      "current End geolocation longitude" +
+        currentEndPositionGeolocation.longitude
+    );
+  }, [currentEndPositionGeolocation]);
+
   function test() {
     const a = { latitude: 35.45063, longitude: -119.105934 };
     const b = { latitude: 35.450621, longitude: -119.105955 };
@@ -872,15 +951,37 @@ const FirstFloor = () => {
     //console.log(t);
   }
 
+  function computeDistanceBetweenTwoPoints() {
+    alert(
+      haversineDistance(
+        currentStartPositionGeolocation,
+        currentEndPositionGeolocation
+      )
+    );
+  }
   useEffect(() => {
     console.log("isCellRoom", isCellRoom);
     console.log("currentImageUrl", currentImageUrl);
   }, [isCellRoom, currentImageUrl]);
 
+  let currentStartGeolocationVariable = null;
+  let currentEndGeolocationVariable = null;
+
+  useEffect(() => {
+    console.log("keyValues", keyValueData);
+  }, [keyValueData]);
   let rotationDegree = "180";
   return (
     <>
       {" "}
+      current geolocation: latitude: {
+        currentGeoLocation.latitude
+      } longitude: {currentGeoLocation.longitude} latest time stamp:{" "}
+      {currentTimestamp}
+      {/* convert epoch time to human readable with my timezon  */}
+      {" \n"}
+      {"global latitude variable " + currentLatitude}
+      {"global longitude variable " + currentLongitude}
       <Modal
         show={show}
         onHide={handleClose}
@@ -1036,6 +1137,7 @@ const FirstFloor = () => {
               });
             }}
           />
+
           <div>select destination location: {currentEndPos} </div>
 
           <Select
@@ -1057,6 +1159,68 @@ const FirstFloor = () => {
               });
             }}
           />
+
+          <div>
+            select start geo location: {currentStartGeolocationVariable}
+          </div>
+          <Select
+            style={{ width: "100px", color: "black" }}
+            placeholder="select geolocation start location"
+            options={currentoptions}
+            onChange={(e) => {
+              if (
+                e.label.length === 3 ||
+                e.label.length === 4 ||
+                e.label.length === 5 ||
+                e.label.length === 6
+              ) {
+                e.label = e.label.replace(/\s/g, "");
+              }
+              setCurrentStartPositionGeolocation({
+                latitude: keyValueData[e.label].latitude,
+                longitude: keyValueData[e.label].longitude,
+              });
+              let row = keyValueData[e.label].row;
+              let col = keyValueData[e.label].col;
+              document.querySelector(
+                `.node-${row}-${col}`
+              ).className = `eachCell node-${row}-${col} start`;
+            }}
+          />
+          <div>select end geo location: {currentEndPos} </div>
+          <Select
+            style={{ width: "100px", color: "black" }}
+            placeholder="select geolocation start location"
+            options={currentoptions}
+            onChange={(e) => {
+              // remove whitespace in e.label;
+              // if length of label is 2 or 3 then
+              if (
+                e.label.length === 3 ||
+                e.label.length === 4 ||
+                e.label.length === 5 ||
+                e.label.length === 6
+              ) {
+                e.label = e.label.replace(/\s/g, "");
+              }
+              setCurrentEndPositionGeolocation({
+                latitude: keyValueData[e.label].latitude,
+                longitude: keyValueData[e.label].longitude,
+              });
+              let row = keyValueData[e.label].row;
+              let col = keyValueData[e.label].col;
+              document.querySelector(
+                `.node-${row}-${col}`
+              ).className = `eachCell node-${row}-${col} end`;
+            }}
+          />
+          <Button
+            variant="dark"
+            className="solveBtn col-md-3 mx-3"
+            onClick={computeDistanceBetweenTwoPoints}
+          >
+            get distance
+          </Button>
         </div>
 
         <div
